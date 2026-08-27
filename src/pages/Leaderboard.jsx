@@ -149,7 +149,6 @@ export default function Leaderboard() {
   const top1 = standings[0] || null;
   const top2 = standings[1] || null;
   const top3 = standings[2] || null;
-  const otherRanks = standings.slice(3);
 
   return (
     <div className="leaderboard-page">
@@ -273,8 +272,8 @@ export default function Leaderboard() {
             )}
           </div>
 
-          {/* Table (Ranks 4+) */}
-          {otherRanks.length > 0 && (
+          {/* Table (Full Standings) */}
+          {standings.length > 0 && (
             <div className="leaderboard-table-card">
               <div className="table-wrap" style={{ border: 'none', boxShadow: 'none', borderRadius: '0' }}>
                 <table className="leaderboard-table">
@@ -287,8 +286,8 @@ export default function Leaderboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {otherRanks.map((item, idx) => {
-                      const rankNum = idx + 4;
+                    {standings.map((item, idx) => {
+                      const rankNum = idx + 1;
                       const percent = item.totalCount > 0 
                         ? Math.round((item.completedCount / item.totalCount) * 100) 
                         : 0;
@@ -317,7 +316,7 @@ export default function Leaderboard() {
                                   className="progress-fill-mini" 
                                   style={{ 
                                     width: `${percent}%`, 
-                                    backgroundColor: item.isMe ? 'var(--brand)' : 'var(--brand)'
+                                    backgroundColor: 'var(--brand)'
                                   }}
                                 ></div>
                               </div>
