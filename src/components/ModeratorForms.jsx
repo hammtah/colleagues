@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../AuthContext';
 import {
   createConcept,
@@ -208,17 +208,23 @@ export function ConceptManager({ concepts, selectedConceptId, onSelect }) {
   );
 }
 
-export function AssignmentComposer({ conceptId }) {
+export function AssignmentComposer({ conceptId, defaultDate }) {
   const { user } = useAuth();
   const [form, setForm] = useState({
     title: '',
     link: '',
     note: '',
-    date: new Date().toISOString().slice(0, 10),
+    date: defaultDate || new Date().toISOString().slice(0, 10),
   });
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    if (defaultDate) {
+      setForm((prev) => ({ ...prev, date: defaultDate }));
+    }
+  }, [defaultDate]);
 
   const onChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -238,7 +244,7 @@ export function AssignmentComposer({ conceptId }) {
         title: '',
         link: '',
         note: '',
-        date: new Date().toISOString().slice(0, 10),
+        date: defaultDate || new Date().toISOString().slice(0, 10),
       });
       setMessage('Assignment posted.');
       setOpen(false);
