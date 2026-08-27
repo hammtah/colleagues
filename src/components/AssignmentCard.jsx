@@ -1,25 +1,29 @@
 import { useNavigate } from 'react-router-dom';
+import { isFutureDateString, getLocalDateString } from '../utils/date';
 
 export default function AssignmentCard({ assignment, done, doneCount, totalUsers, conceptId }) {
   const navigate = useNavigate();
+  const locked = isFutureDateString(assignment.date, getLocalDateString());
 
   const completionPercent = totalUsers > 0
     ? Math.round((doneCount / totalUsers) * 100)
     : 0;
 
   const handleClick = () => {
+    if (locked) return;
     const params = conceptId ? `?concept=${conceptId}` : '';
     navigate(`/assignment/${assignment.id}${params}`);
   };
 
   return (
     <article
-      className={`assignment-row ${done ? 'assignment-row--done' : ''}`}
+      className={`assignment-row ${done ? 'assignment-row--done' : ''} ${locked ? 'assignment-row--locked' : ''}`}
       onClick={handleClick}
       role="button"
-      tabIndex={0}
+      tabIndex={locked ? -1 : 0}
+      aria-disabled={locked}
       onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') handleClick();
+        if (!locked && (e.key === 'Enter' || e.key === ' ')) handleClick();
       }}
     >
       <div className="assignment-row-left">
@@ -48,7 +52,9 @@ export default function AssignmentCard({ assignment, done, doneCount, totalUsers
             {doneCount}/{totalUsers}
           </span>
         </div>
-        <span className="material-symbols-outlined assignment-row-chevron">chevron_right</span>
+        <span className="material-symbols-outlined assignment-row-chevron">
+          {locked ? 'lock' : 'chevron_right'}
+        </span>
       </div>
     </article>
   );

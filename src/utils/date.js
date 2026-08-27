@@ -20,3 +20,8 @@ export function parseLocalDateString(dateStr) {
 
   return new Date(year, month - 1, day);
 }
+
+export function isFutureDateString(dateStr, referenceDateStr = getLocalDateString()) {
+  if (!dateStr) return false;
+  return dateStr > referenceDateStr;
+}

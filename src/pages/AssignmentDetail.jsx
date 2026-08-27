@@ -8,6 +8,7 @@ import {
   useUsers,
   setCompletion,
 } from '../hooks';
+import { getLocalDateString, isFutureDateString } from '../utils/date';
 
 export default function AssignmentDetail() {
   const { assignmentId } = useParams();
@@ -57,8 +58,10 @@ export default function AssignmentDetail() {
     ? Math.round((doneCount / users.length) * 100)
     : 0;
 
+  const locked = assignment ? isFutureDateString(assignment.date, getLocalDateString()) : false;
+
   const toggle = async () => {
-    if (!assignment || !user) return;
+    if (!assignment || !user || locked) return;
     setBusy(true);
     try {
       await setCompletion(assignment.id, user.uid, !myDone);
@@ -87,6 +90,37 @@ export default function AssignmentDetail() {
           ← Back to Feed
         </button>
         <p className="muted" style={{ marginTop: '1rem' }}>Assignment not found.</p>
+      </div>
+    );
+  }
+
+  if (locked) {
+    return (
+      <div className="detail-page">
+        <button type="button" className="detail-back-btn" onClick={handleBack}>
+          <span className="material-symbols-outlined">arrow_back</span>
+          Back to Feed
+        </button>
+
+        <div className="detail-card detail-card--locked">
+          <div className="detail-header detail-header--locked">
+            <div className="detail-meta">
+              <span className="detail-date">
+                <span className="material-symbols-outlined" style={{ fontSize: '16px', verticalAlign: 'middle' }}>
+                  lock
+                </span>
+                {assignment.date}
+              </span>
+            </div>
+            <h1 className="detail-title">{assignment.title}</h1>
+          </div>
+
+          <div className="detail-stats-row">
+            <div className="detail-stat-card detail-locked-state" style={{ gridColumn: '1 / -1' }}>
+              <span className="material-symbols-outlined detail-locked-icon">lock</span>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

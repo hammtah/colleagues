@@ -1226,6 +1226,40 @@ select {
   transform: translateY(-1px);
 }
 
+.assignment-row--locked {
+  background: #f3f4f2;
+  border-color: #d9dfda;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.assignment-row--locked:hover {
+  border-color: #d9dfda;
+  box-shadow: none;
+  transform: none;
+}
+
+.assignment-row--locked .assignment-row-title,
+.assignment-row--locked .assignment-row-date,
+.assignment-row--locked .assignment-row-stat,
+.assignment-row--locked .assignment-row-chevron {
+  color: #7d8a82;
+}
+
+.assignment-row--locked .assignment-done-circle {
+  border-color: #cfd6d1;
+  background: #eef1ee;
+  color: #9aa59f;
+}
+
+.assignment-row--locked .progress-bar-mini {
+  background: #dde3df;
+}
+
+.assignment-row--locked .progress-fill-mini {
+  background: #aab5ae;
+}
+
 .assignment-row:focus-visible {
   outline: 2px solid var(--brand);
   outline-offset: 2px;
@@ -1308,6 +1342,11 @@ select {
   transform: translateX(2px);
 }
 
+.assignment-row--locked:hover .assignment-row-chevron {
+  color: #7d8a82;
+  transform: none;
+}
+
 /* ───────────────────────────────────────────
    Assignment Detail Page
 ─────────────────────────────────────────── */
@@ -1348,10 +1387,19 @@ select {
   box-shadow: var(--shadow);
 }
 
+.detail-card--locked {
+  background: #f4f5f2;
+  border-color: #d9dfda;
+}
+
 .detail-header {
   padding: 2rem 2rem 1.5rem;
   border-bottom: 1px solid var(--line);
   background: linear-gradient(135deg, var(--brand-soft) 0%, transparent 60%);
+}
+
+.detail-header--locked {
+  background: linear-gradient(135deg, rgba(125, 138, 130, 0.12) 0%, transparent 60%);
 }
 
 .detail-meta {
@@ -1381,6 +1429,19 @@ select {
   line-height: 1.3;
   margin: 0 0 0.75rem;
   color: var(--ink);
+}
+
+.detail-card--locked .detail-title,
+.detail-card--locked .detail-date {
+  color: #7d8a82;
+}
+
+.detail-card--locked .detail-date {
+  background: #e5e9e6;
+}
+
+.detail-card--locked .detail-meta {
+  margin-bottom: 0.5rem;
 }
 
 .detail-title-link {
@@ -1421,6 +1482,17 @@ select {
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
+}
+
+.detail-locked-state {
+  min-height: 130px;
+  justify-content: center;
+  background: #f8f9f7;
+}
+
+.detail-locked-icon {
+  font-size: 42px;
+  color: #8a968f;
 }
 
 .detail-stat-card + .detail-stat-card {
