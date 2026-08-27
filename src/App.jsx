@@ -5,7 +5,7 @@ import Events from './pages/Events';
 import Home from './pages/Home';
 import Feed from './pages/Feed';
 import Login from './pages/Login';
-import Progress from './pages/Progress';
+import Leaderboard from './pages/Leaderboard';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -38,7 +38,8 @@ export default function App() {
           >
             <Route index element={<Home />} />
             <Route path="feed" element={<Feed />} />
-            <Route path="progress" element={<Progress />} />
+            <Route path="leaderboard" element={<Leaderboard />} />
+            <Route path="progress" element={<Navigate to="/leaderboard" replace />} />
             <Route path="events" element={<Events />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

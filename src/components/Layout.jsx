@@ -19,7 +19,7 @@ export default function Layout() {
             Concepts
           </NavLink>
           <NavLink to="/feed">Feed</NavLink>
-          <NavLink to="/progress">Progress</NavLink>
+          <NavLink to="/leaderboard">Leaderboard</NavLink>
           <NavLink to="/events">Events</NavLink>
         </nav>
         <div className="user-chip">
