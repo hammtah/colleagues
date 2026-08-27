@@ -12,6 +12,7 @@ const emptyConceptForm = () => ({
   description: '',
   startDate: '',
   endDate: '',
+  imageUrl: '',
 });
 
 export function ConceptManager({ concepts, selectedConceptId, onSelect }) {
@@ -45,6 +46,7 @@ export function ConceptManager({ concepts, selectedConceptId, onSelect }) {
       description: concept.description || '',
       startDate: concept.startDate || '',
       endDate: concept.endDate || '',
+      imageUrl: concept.imageUrl || '',
     });
     setEditingId(concept.id);
     setMode('form');
@@ -155,6 +157,16 @@ export function ConceptManager({ concepts, selectedConceptId, onSelect }) {
                   onChange={onChange}
                   rows={3}
                   required
+                />
+              </label>
+              <label>
+                Cover Image URL (optional)
+                <input
+                  name="imageUrl"
+                  type="url"
+                  value={form.imageUrl}
+                  onChange={onChange}
+                  placeholder="https://example.com/image.png"
                 />
               </label>
               <div className="row">

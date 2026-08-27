@@ -151,6 +151,7 @@ export async function createConcept(data, uid) {
     description: data.description.trim(),
     startDate: data.startDate,
     endDate: data.endDate,
+    imageUrl: (data.imageUrl || '').trim(),
     createdAt: serverTimestamp(),
     createdBy: uid,
   });
@@ -162,6 +163,7 @@ export async function updateConcept(conceptId, data, uid) {
     description: data.description.trim(),
     startDate: data.startDate,
     endDate: data.endDate,
+    imageUrl: (data.imageUrl || '').trim(),
     updatedAt: serverTimestamp(),
     updatedBy: uid,
   });

@@ -16,8 +16,9 @@ export default function Layout() {
         </div>
         <nav className="nav">
           <NavLink to="/" end>
-            Feed
+            Concepts
           </NavLink>
+          <NavLink to="/feed">Feed</NavLink>
           <NavLink to="/progress">Progress</NavLink>
           <NavLink to="/events">Events</NavLink>
         </nav>

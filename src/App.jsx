@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './AuthContext';
 import Layout from './components/Layout';
 import Events from './pages/Events';
 import Home from './pages/Home';
+import Feed from './pages/Feed';
 import Login from './pages/Login';
 import Progress from './pages/Progress';
 
@@ -36,6 +37,7 @@ export default function App() {
             }
           >
             <Route index element={<Home />} />
+            <Route path="feed" element={<Feed />} />
             <Route path="progress" element={<Progress />} />
             <Route path="events" element={<Events />} />
           </Route>
