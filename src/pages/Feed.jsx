@@ -333,7 +333,7 @@ export default function Feed() {
               </div>
 
               {/* Calendar Legend */}
-              <div className="calendar-legend">
+              {/* <div className="calendar-legend">
                 <div className="legend-item">
                   <span className="legend-dot green"></span>
                   <span>All Done</span>
@@ -350,7 +350,7 @@ export default function Feed() {
                   <span className="legend-dot plain"></span>
                   <span>No Task</span>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

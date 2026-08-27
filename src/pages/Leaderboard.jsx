@@ -1,9 +1,11 @@
 import { useMemo, useState } from 'react';
 import { useAuth } from '../AuthContext';
 import { useConcepts, useAssignments, useCompletions, useEvents, useUsers } from '../hooks';
+import { getAvatarBackgroundColor } from '../utils/avatar';
 
-const getUserAvatar = (name) => {
-  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0F6B4C&color=fff&bold=true&size=128`;
+const getUserAvatar = (name, email) => {
+  const bgColor = getAvatarBackgroundColor(email || name);
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=${bgColor}&color=fff&bold=true&size=128`;
 };
 
 export default function Leaderboard() {
@@ -127,7 +129,7 @@ export default function Leaderboard() {
         totalCount,
         rsvpCount,
         points,
-        avatarUrl: getUserAvatar(u.displayName || u.email?.split('@')[0] || 'Member'),
+        avatarUrl: getUserAvatar(u.displayName || u.email?.split('@')[0] || 'Member', u.email),
       };
     }).sort((a, b) => {
       // Primary sort: Points (descending)

@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
+import { getAvatarBackgroundColor } from '../utils/avatar';
 
 export default function Layout() {
   const { profile, isModerator, logout } = useAuth();
@@ -23,10 +24,11 @@ export default function Layout() {
         <div className="user-menu">
           {(() => {
             const name = profile?.displayName || 'Member';
-            const userKey = profile?.email?.split('@')[0] || name;
+            const userKey = profile?.email || name;
+            const bgColor = getAvatarBackgroundColor(userKey);
             const avatarUrl = profile?.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(
               name
-            )}&background=0F6B4C&color=fff&bold=true&size=128`;
+            )}&background=${bgColor}&color=fff&bold=true&size=128`;
             return (
               <>
                 <img src={avatarUrl} alt={name} className="user-avatar" />
