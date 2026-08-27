@@ -14,7 +14,7 @@ service cloud.firestore {
     // Set this to the same UID as VITE_MODERATOR_UID in the React app.
     // After first login, copy the UID from Authentication → Users.
     function moderatorUid() {
-      return 'REPLACE_WITH_MODERATOR_UID';
+      return 'F59J1f4EeSNBiRWQSOkKA9AflON2';
     }
 
     function isOwner(uid) {
