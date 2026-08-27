@@ -7,10 +7,10 @@ function formatTime(value) {
   return value.toDate().toLocaleString();
 }
 
-export default function CommentThread({ assignmentId, usersById }) {
+export default function CommentThread({ assignmentId, usersById, defaultOpen = false }) {
   const { user, isModerator } = useAuth();
   const { comments, loading } = useComments(assignmentId);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen);
   const [text, setText] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -40,9 +40,11 @@ export default function CommentThread({ assignmentId, usersById }) {
 
   return (
     <div className="comments">
-      <button type="button" className="linkish" onClick={() => setOpen((v) => !v)}>
-        {open ? 'Hide' : 'Show'} comments ({comments.length})
-      </button>
+      {!defaultOpen && (
+        <button type="button" className="linkish" onClick={() => setOpen((v) => !v)}>
+          {open ? 'Hide' : 'Show'} comments ({comments.length})
+        </button>
+      )}
       {open && (
         <div className="comments-panel">
           {loading && <p className="muted">Loading comments…</p>}

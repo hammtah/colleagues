@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import Events from './pages/Events';
 import Home from './pages/Home';
 import Feed from './pages/Feed';
+import AssignmentDetail from './pages/AssignmentDetail';
 import Login from './pages/Login';
 import Leaderboard from './pages/Leaderboard';
 
@@ -38,6 +39,7 @@ export default function App() {
           >
             <Route index element={<Home />} />
             <Route path="feed" element={<Feed />} />
+            <Route path="assignment/:assignmentId" element={<AssignmentDetail />} />
             <Route path="leaderboard" element={<Leaderboard />} />
             <Route path="progress" element={<Navigate to="/leaderboard" replace />} />
             <Route path="events" element={<Events />} />

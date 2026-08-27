@@ -126,10 +126,6 @@ export default function Feed() {
     }
   };
 
-  const usersById = useMemo(
-    () => Object.fromEntries(users.map((u) => [u.id, u])),
-    [users]
-  );
 
   const completionMap = useMemo(() => {
     const map = {};
@@ -225,7 +221,7 @@ export default function Feed() {
                       done={done}
                       doneCount={doneCount}
                       totalUsers={users.length || 1}
-                      usersById={usersById}
+                      conceptId={selectedConceptId}
                     />
                   );
                 })
