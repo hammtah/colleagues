@@ -1,15 +1,31 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import AssignmentCard from '../components/AssignmentCard';
-import { AssignmentComposer, ConceptEditor } from '../components/ModeratorForms';
-import { useAssignments, useCompletions, useConcept, useUsers } from '../hooks';
+import { AssignmentComposer, ConceptManager } from '../components/ModeratorForms';
+import { useAssignments, useCompletions, useConcepts, useUsers } from '../hooks';
 
 export default function Home() {
   const { user, isModerator } = useAuth();
-  const { concept, loading: conceptLoading } = useConcept();
-  const { assignments, loading: assignmentsLoading } = useAssignments();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { concepts, loading: conceptsLoading } = useConcepts();
+
+  const selectedConceptId = searchParams.get('concept') || '';
+  const selectedConcept = concepts.find((c) => c.id === selectedConceptId) || null;
+
+  const { assignments, loading: assignmentsLoading } = useAssignments(
+    selectedConceptId || null,
+  );
   const { completions, loading: completionsLoading } = useCompletions();
   const { users, loading: usersLoading } = useUsers();
+
+  useEffect(() => {
+    if (conceptsLoading || concepts.length === 0) return;
+    const valid = concepts.some((c) => c.id === selectedConceptId);
+    if (!valid) {
+      setSearchParams({ concept: concepts[0].id }, { replace: true });
+    }
+  }, [concepts, conceptsLoading, selectedConceptId, setSearchParams]);
 
   const usersById = useMemo(
     () => Object.fromEntries(users.map((u) => [u.id, u])),
@@ -27,27 +43,52 @@ export default function Home() {
   }, [completions]);
 
   const loading =
-    conceptLoading || assignmentsLoading || completionsLoading || usersLoading;
+    conceptsLoading || assignmentsLoading || completionsLoading || usersLoading;
+
+  const selectConcept = (conceptId) => {
+    if (conceptId) {
+      setSearchParams({ concept: conceptId });
+    } else {
+      setSearchParams({});
+    }
+  };
 
   return (
     <div className="feed">
+      {concepts.length > 0 && (
+        <div className="concept-switcher">
+          <label htmlFor="concept-select">Concept</label>
+          <select
+            id="concept-select"
+            value={selectedConceptId}
+            onChange={(e) => selectConcept(e.target.value)}
+          >
+            {concepts.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.title}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <section className="concept-banner">
-        {concept ? (
+        {selectedConcept ? (
           <>
-            <p className="eyebrow">Concept of the month</p>
-            <h1>{concept.title}</h1>
-            <p>{concept.description}</p>
+            <p className="eyebrow">Concept</p>
+            <h1>{selectedConcept.title}</h1>
+            <p>{selectedConcept.description}</p>
             <p className="muted">
-              {concept.startDate} → {concept.endDate}
+              {selectedConcept.startDate} → {selectedConcept.endDate}
             </p>
           </>
         ) : (
           <>
-            <h1>No concept set yet</h1>
+            <h1>No concepts yet</h1>
             <p className="muted">
               {isModerator
-                ? 'Use the editor below to set the current concept.'
-                : 'Ask the moderator to post the concept of the month.'}
+                ? 'Create a concept below to start posting assignments.'
+                : 'Ask the moderator to create a concept.'}
             </p>
           </>
         )}
@@ -55,16 +96,23 @@ export default function Home() {
 
       {isModerator && (
         <div className="mod-stack">
-          <ConceptEditor concept={concept} />
-          <AssignmentComposer />
+          <ConceptManager
+            concepts={concepts}
+            selectedConceptId={selectedConceptId}
+            onSelect={selectConcept}
+          />
+          <AssignmentComposer conceptId={selectedConceptId} />
         </div>
       )}
 
       <section className="assignment-list">
         <h2>Assignments</h2>
         {loading && <p className="muted">Loading feed…</p>}
-        {!loading && assignments.length === 0 && (
-          <p className="muted">No assignments yet.</p>
+        {!loading && !selectedConcept && (
+          <p className="muted">Select a concept to see its assignments.</p>
+        )}
+        {!loading && selectedConcept && assignments.length === 0 && (
+          <p className="muted">No assignments for this concept yet.</p>
         )}
         {assignments.map((a) => {
           const done = Boolean(completionMap[`${a.id}_${user.uid}`]);

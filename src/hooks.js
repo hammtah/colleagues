@@ -1,22 +1,25 @@
 import { useEffect, useState } from 'react';
 import {
   addDoc,
+  arrayRemove,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
+  getDocs,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
   setDoc,
   updateDoc,
-  arrayUnion,
-  arrayRemove,
+  where,
+  writeBatch,
 } from 'firebase/firestore';
 import { db } from './firebase';
 
-export function useConcept() {
-  const [concept, setConcept] = useState(null);
+export function useConcepts() {
+  const [concepts, setConcepts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,16 +27,17 @@ export function useConcept() {
       setLoading(false);
       return undefined;
     }
-    return onSnapshot(doc(db, 'concept', 'current'), (snap) => {
-      setConcept(snap.exists() ? { id: snap.id, ...snap.data() } : null);
+    const q = query(collection(db, 'concepts'), orderBy('startDate', 'desc'));
+    return onSnapshot(q, (snap) => {
+      setConcepts(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
       setLoading(false);
     });
   }, []);
 
-  return { concept, loading };
+  return { concepts, loading };
 }
 
-export function useAssignments() {
+export function useAssignments(conceptId = null) {
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -42,12 +46,23 @@ export function useAssignments() {
       setLoading(false);
       return undefined;
     }
-    const q = query(collection(db, 'assignments'), orderBy('date', 'desc'));
+
+    let q;
+    if (conceptId) {
+      q = query(
+        collection(db, 'assignments'),
+        where('conceptId', '==', conceptId),
+        orderBy('date', 'desc'),
+      );
+    } else {
+      q = query(collection(db, 'assignments'), orderBy('date', 'desc'));
+    }
+
     return onSnapshot(q, (snap) => {
       setAssignments(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
       setLoading(false);
     });
-  }, []);
+  }, [conceptId]);
 
   return { assignments, loading };
 }
@@ -130,23 +145,48 @@ export function useEvents() {
   return { events, loading };
 }
 
-export async function saveConcept(data, uid) {
-  await setDoc(
-    doc(db, 'concept', 'current'),
-    {
-      title: data.title.trim(),
-      description: data.description.trim(),
-      startDate: data.startDate,
-      endDate: data.endDate,
-      updatedAt: serverTimestamp(),
-      updatedBy: uid,
-    },
-    { merge: true },
-  );
+export async function createConcept(data, uid) {
+  await addDoc(collection(db, 'concepts'), {
+    title: data.title.trim(),
+    description: data.description.trim(),
+    startDate: data.startDate,
+    endDate: data.endDate,
+    createdAt: serverTimestamp(),
+    createdBy: uid,
+  });
 }
 
-export async function createAssignment(data, uid) {
+export async function updateConcept(conceptId, data, uid) {
+  await updateDoc(doc(db, 'concepts', conceptId), {
+    title: data.title.trim(),
+    description: data.description.trim(),
+    startDate: data.startDate,
+    endDate: data.endDate,
+    updatedAt: serverTimestamp(),
+    updatedBy: uid,
+  });
+}
+
+export async function deleteConcept(conceptId) {
+  const assignmentsSnap = await getDocs(
+    query(collection(db, 'assignments'), where('conceptId', '==', conceptId)),
+  );
+
+  const batch = writeBatch(db);
+  for (const assignmentDoc of assignmentsSnap.docs) {
+    const commentsSnap = await getDocs(
+      collection(db, 'assignments', assignmentDoc.id, 'comments'),
+    );
+    commentsSnap.docs.forEach((c) => batch.delete(c.ref));
+    batch.delete(assignmentDoc.ref);
+  }
+  batch.delete(doc(db, 'concepts', conceptId));
+  await batch.commit();
+}
+
+export async function createAssignment(data, conceptId, uid) {
   await addDoc(collection(db, 'assignments'), {
+    conceptId,
     title: data.title.trim(),
     link: data.link.trim(),
     note: (data.note || '').trim(),

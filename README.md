@@ -7,9 +7,9 @@ Spark (free) plan only: client-side logic, Firestore security rules, Firebase Ho
 ## Features
 
 - Email/password auth
-- Concept of the month banner (moderator edits)
-- Assignment feed with done checkbox, completion counts, and comments
-- Public group progress table
+- Multiple concepts (create, edit, delete) — each with its own assignments
+- Assignment feed scoped to the selected concept
+- Public group progress: per-concept and overall (all concepts combined)
 - Events with RSVP (coding challenge / mock interview / other)
 
 ## Setup
@@ -77,15 +77,15 @@ Hosting serves the Vite `dist/` build with SPA rewrites to `index.html`.
 | Collection / doc | Purpose |
 | --- | --- |
 | `users/{uid}` | `displayName`, `email`, `role`, `createdAt` |
-| `concept/current` | Active concept title, description, date range |
-| `assignments/{id}` | Title, link, note, date |
+| `concepts/{id}` | Title, description, date range |
+| `assignments/{id}` | `conceptId`, title, link, note, date |
 | `assignments/{id}/comments/{id}` | Comment text + author |
 | `completions/{assignmentId}_{userId}` | `done` boolean |
 | `events/{id}` | Title, type, date, description, `rsvps[]` |
 
 ## Roles
 
-- **Moderator** — UID from `VITE_MODERATOR_UID` / rules. Can write concept, assignments, events.
+- **Moderator** — UID from `VITE_MODERATOR_UID` / rules. Can manage concepts, assignments, events.
 - **Member** — everyone authenticated. Can toggle own completion, comment, RSVP.
 
 ## Scripts

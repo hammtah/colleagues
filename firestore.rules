@@ -33,14 +33,16 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    match /concept/{docId} {
+    match /concepts/{conceptId} {
       allow read: if isSignedIn();
-      allow write: if isModerator() && docId == 'current';
+      allow create, update, delete: if isModerator();
     }
 
     match /assignments/{assignmentId} {
       allow read: if isSignedIn();
-      allow create, update, delete: if isModerator();
+      allow create: if isModerator()
+        && request.resource.data.conceptId is string;
+      allow update, delete: if isModerator();
 
       match /comments/{commentId} {
         allow read: if isSignedIn();
