@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useAuth } from '../AuthContext';
 import { createEvent, deleteEvent, toggleRsvp, useEvents, useUsers } from '../hooks';
+import { getLocalDateString } from '../utils/date';
 
 const EVENT_TYPES = [
   { value: 'coding_challenge', label: 'Coding challenge' },
@@ -22,7 +23,7 @@ export default function Events() {
   const [form, setForm] = useState({
     title: '',
     type: 'coding_challenge',
-    date: new Date().toISOString().slice(0, 10),
+    date: getLocalDateString(),
     description: '',
   });
 
@@ -44,7 +45,7 @@ export default function Events() {
       setForm({
         title: '',
         type: 'coding_challenge',
-        date: new Date().toISOString().slice(0, 10),
+        date: getLocalDateString(),
         description: '',
       });
       setOpen(false);

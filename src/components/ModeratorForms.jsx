@@ -6,6 +6,7 @@ import {
   updateConcept,
   createAssignment,
 } from '../hooks';
+import { getLocalDateString } from '../utils/date';
 
 const emptyConceptForm = () => ({
   title: '',
@@ -214,7 +215,7 @@ export function AssignmentComposer({ conceptId, defaultDate }) {
     title: '',
     link: '',
     note: '',
-    date: defaultDate || new Date().toISOString().slice(0, 10),
+    date: defaultDate || getLocalDateString(),
   });
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -244,7 +245,7 @@ export function AssignmentComposer({ conceptId, defaultDate }) {
         title: '',
         link: '',
         note: '',
-        date: defaultDate || new Date().toISOString().slice(0, 10),
+        date: defaultDate || getLocalDateString(),
       });
       setMessage('Assignment posted.');
       setOpen(false);

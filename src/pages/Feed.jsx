@@ -4,6 +4,7 @@ import { useAuth } from '../AuthContext';
 import AssignmentCard from '../components/AssignmentCard';
 import { AssignmentComposer } from '../components/ModeratorForms';
 import { useAssignments, useCompletions, useConcepts, useUsers } from '../hooks';
+import { getLocalDateString, parseLocalDateString } from '../utils/date';
 
 const monthNames = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -83,7 +84,7 @@ export default function Feed() {
   const { completions, loading: completionsLoading } = useCompletions();
   const { users, loading: usersLoading } = useUsers();
 
-  const todayStr = new Date().toLocaleDateString('sv').slice(0, 10);
+  const todayStr = getLocalDateString();
   const [selectedDate, setSelectedDate] = useState(todayStr);
 
   const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth());
@@ -104,16 +105,13 @@ export default function Feed() {
   // Align calendar view and active selection to concept's dates
   useEffect(() => {
     if (selectedConcept) {
-      const today = new Date().toLocaleDateString('sv').slice(0, 10);
-      const inRange = today >= selectedConcept.startDate && today <= selectedConcept.endDate;
-      
-      const defaultDate = inRange ? today : selectedConcept.startDate;
-      setSelectedDate(defaultDate);
+      const today = getLocalDateString();
+      setSelectedDate(today);
 
-      const defaultDateObj = new Date(defaultDate);
-      if (!isNaN(defaultDateObj.getTime())) {
-        setCalendarMonth(defaultDateObj.getMonth());
-        setCalendarYear(defaultDateObj.getFullYear());
+      const todayObj = parseLocalDateString(today);
+      if (todayObj) {
+        setCalendarMonth(todayObj.getMonth());
+        setCalendarYear(todayObj.getFullYear());
       }
     }
   }, [selectedConceptId, selectedConcept]);
