@@ -129,6 +129,68 @@ select {
   color: var(--muted);
 }
 
+.user-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-avatar {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 999px;
+  object-fit: cover;
+  display: block;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.user-menu:focus-within .user-avatar,
+.user-menu:hover .user-avatar {
+  border-color: var(--line);
+}
+
+.user-popup {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100% ;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.75rem 0.85rem;
+  min-width: 220px;
+  box-shadow: var(--shadow);
+  z-index: 70;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.user-menu:hover .user-popup,
+.user-menu:focus-within .user-popup {
+  display: flex;
+}
+
+.popup-name {
+  font-weight: 700;
+}
+
+.popup-role.muted {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.user-popup .btn.ghost {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  justify-content: flex-start;
+}
+
+.user-popup .btn.ghost:hover {
+  background: rgba(15, 107, 76, 0.06);
+}
+
 .nav {
   display: flex;
   gap: 0.5rem;

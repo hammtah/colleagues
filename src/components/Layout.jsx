@@ -20,14 +20,28 @@ export default function Layout() {
           <NavLink to="/leaderboard">Leaderboard</NavLink>
           <NavLink to="/events">Events</NavLink>
         </nav>
-        <div className="user-chip">
-          <span>
-            {profile?.displayName || 'Member'}
-            {isModerator ? ' · moderator' : ''}
-          </span>
-          <button type="button" className="btn ghost" onClick={logout}>
-            Sign out
-          </button>
+        <div className="user-menu">
+          {(() => {
+            const name = profile?.displayName || 'Member';
+            const userKey = profile?.email?.split('@')[0] || name;
+            const avatarUrl = profile?.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(
+              name
+            )}&background=0F6B4C&color=fff&bold=true&size=128`;
+            return (
+              <>
+                <img src={avatarUrl} alt={name} className="user-avatar" />
+                <div className="user-popup" role="menu">
+                  <div className="popup-name">{name}</div>
+                  <div className="popup-role muted">{isModerator ? 'moderator' : 'member'}</div>
+                  <div style={{ marginTop: '0.25rem' }}>
+                    <button type="button" className="btn ghost" onClick={logout}>
+                      Sign out
+                    </button>
+                  </div>
+                </div>
+              </>
+            );
+          })()}
         </div>
       </header>
       <main className="page">
