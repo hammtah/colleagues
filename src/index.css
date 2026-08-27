@@ -1,0 +1,383 @@
+:root {
+  color-scheme: light;
+  --bg: #f3efe6;
+  --bg-accent: #e7f0ea;
+  --ink: #1c241f;
+  --muted: #5d6b63;
+  --line: #d5ddd7;
+  --surface: #fffdf8;
+  --brand: #0f6b4c;
+  --brand-soft: #d9efe5;
+  --danger: #9b2c2c;
+  --shadow: 0 10px 30px rgba(28, 36, 31, 0.06);
+  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top left, #dff3ea 0%, transparent 40%),
+    linear-gradient(180deg, var(--bg-accent), var(--bg));
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  min-width: 320px;
+}
+
+a {
+  color: var(--brand);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.app-shell {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 1rem 1.25rem 3rem;
+}
+
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 253, 248, 0.9);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.brand {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.brand p,
+.muted,
+.lede {
+  color: var(--muted);
+}
+
+.brand p,
+.eyebrow {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 12px;
+  background: var(--brand);
+  color: white;
+  font-weight: 700;
+}
+
+.nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.nav a {
+  text-decoration: none;
+  color: var(--ink);
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+}
+
+.nav a.active {
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-weight: 600;
+}
+
+.user-chip {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  font-size: 0.92rem;
+}
+
+.page h1,
+.page h2,
+.auth-card h1 {
+  font-family: "Fraunces", Georgia, serif;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.4rem;
+}
+
+.btn {
+  border: none;
+  border-radius: 10px;
+  background: var(--brand);
+  color: white;
+  padding: 0.55rem 0.95rem;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn.ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+
+.danger-btn,
+.linkish.danger {
+  color: var(--danger);
+}
+
+.linkish {
+  border: none;
+  background: none;
+  color: var(--brand);
+  cursor: pointer;
+  padding: 0;
+}
+
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+.auth-card,
+.concept-banner,
+.assignment,
+.event-card,
+.panel,
+.mod-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+.auth-card {
+  width: min(100%, 420px);
+  padding: 1.75rem;
+}
+
+.concept-banner,
+.assignment,
+.event-card,
+.panel,
+.mod-panel {
+  padding: 1.25rem 1.35rem;
+  margin-bottom: 1rem;
+}
+
+.concept-banner {
+  background:
+    linear-gradient(135deg, rgba(15, 107, 76, 0.08), transparent 50%),
+    var(--surface);
+}
+
+.mod-stack {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.stack-form {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 0.85rem;
+}
+
+.stack-form label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.92rem;
+}
+
+.stack-form input,
+.stack-form textarea,
+.stack-form select,
+.comment-form input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.55rem 0.7rem;
+  background: white;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.assignment-head,
+.events-head,
+.event-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.assignment h3 {
+  margin: 0 0 0.25rem;
+}
+
+.note {
+  margin: 0.75rem 0;
+}
+
+.progress-pill {
+  display: inline-block;
+  margin: 0.35rem 0 0.75rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-size: 0.85rem;
+}
+
+.done-check {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.comments-panel {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+}
+
+.comment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.75rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.comment-meta {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.comment-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.progress-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+.progress-table th,
+.progress-table td {
+  border-bottom: 1px solid var(--line);
+  padding: 0.7rem 0.8rem;
+  text-align: center;
+  vertical-align: top;
+}
+
+.progress-table th:first-child,
+.progress-table td:first-child,
+.progress-table th:last-child,
+.progress-table td:last-child {
+  text-align: left;
+}
+
+.progress-table th small {
+  display: block;
+  max-width: 7rem;
+  margin: 0.25rem auto 0;
+  color: var(--muted);
+  font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.progress-table td.yes {
+  color: var(--brand);
+  font-weight: 700;
+}
+
+.progress-table td.no {
+  color: #b0bab4;
+}
+
+.event-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.rsvp-list ul {
+  margin: 0.35rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.error {
+  color: var(--danger);
+}
+
+@media (max-width: 720px) {
+  .topbar {
+    align-items: stretch;
+  }
+
+  .nav,
+  .user-chip,
+  .assignment-head,
+  .events-head,
+  .event-top,
+  .row {
+    flex-direction: column;
+    grid-template-columns: 1fr;
+  }
+
+  .comment-form {
+    flex-direction: column;
+  }
+}
