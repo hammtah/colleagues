@@ -8,11 +8,9 @@ export default function Layout() {
     <div className="app-shell">
       <header className="topbar">
         <div className="brand">
-          <span className="brand-mark">CL</span>
-          <div>
-            <strong>Colleagues</strong>
-            <p>Concept of the month</p>
-          </div>
+          <span className="brand-mark">
+            <img src="/colleagues_icon.png" alt="Colleagues" className="brand-icon" />
+          </span>
         </div>
         <nav className="nav">
           <NavLink to="/" end>

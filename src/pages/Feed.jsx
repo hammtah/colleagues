@@ -167,6 +167,14 @@ export default function Feed() {
     return getCalendarCells(calendarYear, calendarMonth);
   }, [calendarYear, calendarMonth]);
 
+  const getDayStateClass = (dateStr, hasAssignmentsOnDay, isAllCompleted) => {
+    if (!dateStr || !hasAssignmentsOnDay) return 'plain';
+    if (isAllCompleted) return 'completed';
+    if (dateStr < todayStr) return 'overdue';
+    if (dateStr > todayStr) return 'upcoming';
+    return 'today-pending';
+  };
+
   if (!loading && concepts.length === 0) {
     return (
       <div className="empty-dashboard" style={{ marginTop: '2rem' }}>
@@ -302,10 +310,8 @@ export default function Feed() {
 
                     if (isSelected) {
                       cellClass += ' active';
-                    } else if (hasAssignmentsOnDay) {
-                      cellClass += isAllCompleted ? ' completed' : ' incomplete';
                     } else {
-                      cellClass += ' plain';
+                      cellClass += ` ${getDayStateClass(cell.dateStr, hasAssignmentsOnDay, isAllCompleted)}`;
                     }
                   }
 
@@ -336,7 +342,11 @@ export default function Feed() {
                 </div>
                 <div className="legend-item">
                   <span className="legend-dot red"></span>
-                  <span>Incomplete</span>
+                  <span>Overdue</span>
+                </div>
+                <div className="legend-item">
+                  <span className="legend-dot gray"></span>
+                  <span>Upcoming</span>
                 </div>
                 <div className="legend-item">
                   <span className="legend-dot plain"></span>
