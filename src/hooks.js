@@ -198,12 +198,25 @@ export async function createAssignment(data, conceptId, uid) {
   });
 }
 
-export async function setCompletion(assignmentId, userId, done) {
+export async function setCompletion(assignmentId, userId, done, submissionData = {}) {
   const id = `${assignmentId}_${userId}`;
+  if (!done) {
+    await setDoc(doc(db, 'completions', id), {
+      assignmentId,
+      userId,
+      done: false,
+      updatedAt: serverTimestamp(),
+    });
+    return;
+  }
   await setDoc(doc(db, 'completions', id), {
     assignmentId,
     userId,
-    done,
+    done: true,
+    solutionUrl: (submissionData.solutionUrl || '').trim(),
+    pattern: (submissionData.pattern || '').trim(),
+    keyInsight: (submissionData.keyInsight || '').trim(),
+    blockers: (submissionData.blockers || '').trim(),
     updatedAt: serverTimestamp(),
   });
 }
