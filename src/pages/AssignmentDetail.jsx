@@ -26,6 +26,18 @@ function ColleagueCard({ item, currentUserId, forceExpanded }) {
     setExpanded((prev) => !prev);
   };
 
+  // Group notes & legacy fields into a single text block
+  const groupedNotes = (
+    item.notes ||
+    [
+      item.pattern ? `Pattern: ${item.pattern}` : '',
+      item.keyInsight ? `Key Insight: ${item.keyInsight}` : '',
+      item.blockers ? `Initial Blockers: ${item.blockers}` : '',
+    ]
+      .filter(Boolean)
+      .join('\n\n')
+  ).trim();
+
   return (
     <div className={`colleague-card ${isMe ? 'is-me' : ''} ${expanded ? 'expanded' : ''}`}>
       <div className="colleague-card-header" onClick={() => setExpanded((prev) => !prev)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setExpanded((prev) => !prev); }}>
@@ -70,33 +82,14 @@ function ColleagueCard({ item, currentUserId, forceExpanded }) {
             <span className="muted" style={{ fontSize: '0.8rem' }}>No link provided</span>
           )}
 
-          {/* Optional Pattern Tag */}
-          {item.pattern && (
-            <div className="colleague-pattern-tag">
-              <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>schema</span>
-              <span><strong>Pattern:</strong> {item.pattern}</span>
-            </div>
-          )}
-
-          {/* Optional Key Insight */}
-          {item.keyInsight && (
+          {/* Grouped Pattern, Key Insight & Blockers */}
+          {groupedNotes && (
             <div className="colleague-detail-box insight">
               <div className="box-header">
-                <span className="material-symbols-outlined">lightbulb</span>
-                <span>Key Insight</span>
+                <span className="material-symbols-outlined">notes</span>
+                <span>Pattern, Key Insight & Blockers</span>
               </div>
-              <p>{item.keyInsight}</p>
-            </div>
-          )}
-
-          {/* Optional Blockers */}
-          {item.blockers && (
-            <div className="colleague-detail-box blocker">
-              <div className="box-header">
-                <span className="material-symbols-outlined">report_problem</span>
-                <span>Initially Blocked By</span>
-              </div>
-              <p>{item.blockers}</p>
+              <p style={{ whiteSpace: 'pre-wrap' }}>{groupedNotes}</p>
             </div>
           )}
         </div>
@@ -119,9 +112,7 @@ export default function AssignmentDetail() {
 
   const [isEditing, setIsEditing] = useState(false);
   const [solutionUrl, setSolutionUrl] = useState('');
-  const [pattern, setPattern] = useState('');
-  const [keyInsight, setKeyInsight] = useState('');
-  const [blockers, setBlockers] = useState('');
+  const [notes, setNotes] = useState('');
   const [formError, setFormError] = useState('');
   const [busy, setBusy] = useState(false);
   const [forceExpandedAll, setForceExpandedAll] = useState(null);
@@ -156,9 +147,11 @@ export default function AssignmentDetail() {
   useEffect(() => {
     if (myCompletion && !isEditing) {
       setSolutionUrl(myCompletion.solutionUrl || '');
-      setPattern(myCompletion.pattern || '');
-      setKeyInsight(myCompletion.keyInsight || '');
-      setBlockers(myCompletion.blockers || '');
+      setNotes(
+        myCompletion.notes ||
+        [myCompletion.pattern ? `Pattern: ${myCompletion.pattern}` : '', myCompletion.keyInsight, myCompletion.blockers ? `Blockers: ${myCompletion.blockers}` : ''].filter(Boolean).join('\n\n') ||
+        ''
+      );
     }
   }, [myCompletion, isEditing]);
 
@@ -186,9 +179,11 @@ export default function AssignmentDetail() {
   const handleStartEdit = () => {
     if (myCompletion) {
       setSolutionUrl(myCompletion.solutionUrl || '');
-      setPattern(myCompletion.pattern || '');
-      setKeyInsight(myCompletion.keyInsight || '');
-      setBlockers(myCompletion.blockers || '');
+      setNotes(
+        myCompletion.notes ||
+        [myCompletion.pattern ? `Pattern: ${myCompletion.pattern}` : '', myCompletion.keyInsight, myCompletion.blockers ? `Blockers: ${myCompletion.blockers}` : ''].filter(Boolean).join('\n\n') ||
+        ''
+      );
     }
     setFormError('');
     setIsEditing(true);
@@ -199,9 +194,7 @@ export default function AssignmentDetail() {
     setFormError('');
     if (myCompletion) {
       setSolutionUrl(myCompletion.solutionUrl || '');
-      setPattern(myCompletion.pattern || '');
-      setKeyInsight(myCompletion.keyInsight || '');
-      setBlockers(myCompletion.blockers || '');
+      setNotes(myCompletion.notes || myCompletion.keyInsight || '');
     }
   };
 
@@ -224,9 +217,7 @@ export default function AssignmentDetail() {
     try {
       await setCompletion(assignment.id, user.uid, true, {
         solutionUrl: url,
-        pattern,
-        keyInsight,
-        blockers,
+        notes,
       });
       setIsEditing(false);
     } catch (err) {
@@ -246,9 +237,7 @@ export default function AssignmentDetail() {
       await setCompletion(assignment.id, user.uid, false);
       setIsEditing(false);
       setSolutionUrl('');
-      setPattern('');
-      setKeyInsight('');
-      setBlockers('');
+      setNotes('');
     } catch (err) {
       console.error(err);
     } finally {
@@ -407,50 +396,17 @@ export default function AssignmentDetail() {
                     <small className="field-hint">Mandatory: Provide link to your code or repository.</small>
                   </div>
 
-                  {/* Pattern - Optional */}
+                  {/* Grouped Notes / Pattern, Key Insight & Blockers - Optional */}
                   <div className="submission-field">
-                    <label htmlFor="pattern">
-                      Pattern / Strategy <span className="field-optional">(optional)</span>
-                    </label>
-                    <div className="input-with-icon">
-                      <span className="material-symbols-outlined field-icon">schema</span>
-                      <input
-                        id="pattern"
-                        type="text"
-                        placeholder="e.g. Two Pointers, Sliding Window, Monotonic Stack"
-                        value={pattern}
-                        onChange={(e) => setPattern(e.target.value)}
-                        disabled={busy}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Key Insight - Optional */}
-                  <div className="submission-field">
-                    <label htmlFor="keyInsight">
-                      Key Insight <span className="field-optional">(optional)</span>
+                    <label htmlFor="notes">
+                      Pattern, Key Insight & Blockers <span className="field-optional">(optional)</span>
                     </label>
                     <textarea
-                      id="keyInsight"
-                      rows={3}
-                      placeholder="What was the main lightbulb moment or trick to solving this problem?"
-                      value={keyInsight}
-                      onChange={(e) => setKeyInsight(e.target.value)}
-                      disabled={busy}
-                    />
-                  </div>
-
-                  {/* What initially blocked me - Optional */}
-                  <div className="submission-field">
-                    <label htmlFor="blockers">
-                      What initially blocked me <span className="field-optional">(optional)</span>
-                    </label>
-                    <textarea
-                      id="blockers"
-                      rows={3}
-                      placeholder="Where did you get stuck first, or what edge cases tripped you up?"
-                      value={blockers}
-                      onChange={(e) => setBlockers(e.target.value)}
+                      id="notes"
+                      rows={5}
+                      placeholder="Share the pattern/strategy used, key insights, or what initially blocked you..."
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
                       disabled={busy}
                     />
                   </div>
@@ -487,32 +443,12 @@ export default function AssignmentDetail() {
                     </a>
                   </div>
 
-                  {myCompletion.pattern && (
+                  {(myCompletion.notes || myCompletion.keyInsight) && (
                     <div className="submission-view-item">
-                      <span className="submission-view-label">Pattern / Strategy</span>
-                      <div className="submission-pattern-tag">
-                        <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>schema</span>
-                        {myCompletion.pattern}
-                      </div>
-                    </div>
-                  )}
-
-                  {myCompletion.keyInsight && (
-                    <div className="submission-view-item">
-                      <span className="submission-view-label">Key Insight</span>
+                      <span className="submission-view-label">Pattern, Key Insight & Blockers</span>
                       <div className="submission-box insight-box">
-                        <span className="material-symbols-outlined box-icon">lightbulb</span>
-                        <p>{myCompletion.keyInsight}</p>
-                      </div>
-                    </div>
-                  )}
-
-                  {myCompletion.blockers && (
-                    <div className="submission-view-item">
-                      <span className="submission-view-label">What initially blocked me</span>
-                      <div className="submission-box blocker-box">
-                        <span className="material-symbols-outlined box-icon">report_problem</span>
-                        <p>{myCompletion.blockers}</p>
+                        <span className="material-symbols-outlined box-icon">notes</span>
+                        <p style={{ whiteSpace: 'pre-wrap' }}>{myCompletion.notes || myCompletion.keyInsight}</p>
                       </div>
                     </div>
                   )}

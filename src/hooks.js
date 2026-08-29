@@ -214,9 +214,7 @@ export async function setCompletion(assignmentId, userId, done, submissionData =
     userId,
     done: true,
     solutionUrl: (submissionData.solutionUrl || '').trim(),
-    pattern: (submissionData.pattern || '').trim(),
-    keyInsight: (submissionData.keyInsight || '').trim(),
-    blockers: (submissionData.blockers || '').trim(),
+    notes: (submissionData.notes || submissionData.keyInsight || '').trim(),
     updatedAt: serverTimestamp(),
   });
 }
