@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { useTheme } from '../ThemeContext';
 import { getAvatarBackgroundColor } from '../utils/avatar';
@@ -6,6 +6,7 @@ import { getAvatarBackgroundColor } from '../utils/avatar';
 export default function Layout() {
   const { profile, isModerator, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const location = useLocation();
 
   return (
     <div className="app-shell">
@@ -62,7 +63,7 @@ export default function Layout() {
           </div>
         </div>
       </header>
-      <main className="page">
+      <main className="page page-transition-wrap" key={location.pathname}>
         <Outlet />
       </main>
     </div>
