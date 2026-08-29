@@ -2258,6 +2258,111 @@ select {
   background: rgba(24, 35, 29, 0.8);
 }
 
+/* ───────────────────────────────────────────
+   Celebration Toast Overlay & Gamification
+─────────────────────────────────────────── */
+.celebration-toast-overlay {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  animation: celebrationSlideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@media (max-width: 540px) {
+  .celebration-toast-overlay {
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+  }
+}
+
+@keyframes celebrationSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.celebration-toast {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--surface);
+  border: 2px solid var(--brand);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 12px 32px rgba(15, 107, 76, 0.25);
+  max-width: 420px;
+}
+
+[data-theme="dark"] .celebration-toast {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+}
+
+.celebration-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  color: var(--brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  animation: pulseScale 0.6s ease infinite alternate;
+}
+
+@keyframes pulseScale {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+
+.celebration-check {
+  font-size: 28px;
+}
+
+.celebration-text h3 {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.1rem;
+  margin: 0 0 0.2rem;
+  color: var(--ink);
+}
+
+.celebration-text p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.celebration-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  transition: color 0.15s, background 0.15s;
+}
+
+.celebration-close-btn:hover {
+  color: var(--ink);
+  background: var(--line);
+}
+
+
 
 
 

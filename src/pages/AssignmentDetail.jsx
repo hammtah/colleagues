@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import confetti from 'canvas-confetti';
 import { useAuth } from '../AuthContext';
 import CommentThread from '../components/CommentThread';
 import {
@@ -116,6 +117,7 @@ export default function AssignmentDetail() {
   const [formError, setFormError] = useState('');
   const [busy, setBusy] = useState(false);
   const [forceExpandedAll, setForceExpandedAll] = useState(null);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   const loading = assignmentsLoading || completionsLoading || usersLoading;
 
@@ -220,6 +222,24 @@ export default function AssignmentDetail() {
         notes,
       });
       setIsEditing(false);
+      setShowCelebration(true);
+
+      // Trigger Confetti Celebration!
+      try {
+        confetti({
+          particleCount: 120,
+          spread: 80,
+          origin: { y: 0.6 },
+          colors: ['#22c55e', '#10b981', '#3b82f6', '#f59e0b', '#ec4899'],
+        });
+      } catch (err) {
+        console.error(err);
+      }
+
+      // Auto dismiss notification after 5 seconds
+      setTimeout(() => {
+        setShowCelebration(false);
+      }, 5000);
     } catch (err) {
       console.error(err);
       setFormError('Failed to submit solution. Please try again.');
@@ -563,6 +583,29 @@ export default function AssignmentDetail() {
           </div>
         </aside>
       </div>
+
+      {/* Celebration Toast Notification */}
+      {showCelebration && (
+        <div className="celebration-toast-overlay">
+          <div className="celebration-toast">
+            <div className="celebration-icon-wrap">
+              <span className="material-symbols-outlined celebration-check">task_alt</span>
+            </div>
+            <div className="celebration-text">
+              <h3>🎉 Assignment Completed!</h3>
+              <p>Awesome work! Your solution & details have been saved.</p>
+            </div>
+            <button
+              type="button"
+              className="celebration-close-btn"
+              onClick={() => setShowCelebration(false)}
+              aria-label="Close notification"
+            >
+              <span className="material-symbols-outlined">close</span>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
