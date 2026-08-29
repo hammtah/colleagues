@@ -1,5 +1,7 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react';
+import { BrowserRouter as Router, Routes as AppRoutes, Route as AppRoute } from 'react-router-dom';
 import { AuthProvider, useAuth } from './AuthContext';
+import { ThemeProvider } from './ThemeContext';
 import Layout from './components/Layout';
 import Events from './pages/Events';
 import Home from './pages/Home';
@@ -25,28 +27,30 @@ function ProtectedRoute({ children }) {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Layout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Home />} />
-            <Route path="feed" element={<Feed />} />
-            <Route path="assignment/:assignmentId" element={<AssignmentDetail />} />
-            <Route path="leaderboard" element={<Leaderboard />} />
-            <Route path="progress" element={<Navigate to="/leaderboard" replace />} />
-            <Route path="events" element={<Events />} />
-          </Route>
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <Router>
+          <AppRoutes>
+            <AppRoute path="/login" element={<Login />} />
+            <AppRoute
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Layout />
+                </ProtectedRoute>
+              }
+            >
+              <AppRoute index element={<Home />} />
+              <AppRoute path="feed" element={<Feed />} />
+              <AppRoute path="assignment/:assignmentId" element={<AssignmentDetail />} />
+              <AppRoute path="leaderboard" element={<Leaderboard />} />
+              <AppRoute path="progress" element={<Navigate to="/leaderboard" replace />} />
+              <AppRoute path="events" element={<Events />} />
+            </AppRoute>
+            <AppRoute path="*" element={<Navigate to="/" replace />} />
+          </AppRoutes>
+        </Router>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
