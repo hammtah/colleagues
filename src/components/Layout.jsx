@@ -16,7 +16,7 @@ export default function Layout() {
             <img src="/colleagues_icon.png" alt="Colleagues" className="brand-icon" />
           </span>
         </div>
-        <nav className="nav">
+        <nav className="nav desktop-nav">
           <NavLink to="/" end>
             Concepts
           </NavLink>
@@ -66,6 +66,27 @@ export default function Layout() {
       <main className="page page-transition-wrap" key={location.pathname}>
         <Outlet />
       </main>
+
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="bottom-nav" aria-label="Mobile navigation">
+        <NavLink to="/" end className={({ isActive }) => `bottom-nav-item ${isActive ? 'active' : ''}`}>
+          <span className="material-symbols-outlined bottom-nav-icon">grid_view</span>
+          <span className="bottom-nav-label">Concepts</span>
+        </NavLink>
+        <NavLink to="/feed" className={({ isActive }) => `bottom-nav-item ${isActive ? 'active' : ''}`}>
+          <span className="material-symbols-outlined bottom-nav-icon">dynamic_feed</span>
+          <span className="bottom-nav-label">Feed</span>
+        </NavLink>
+        <NavLink to="/leaderboard" className={({ isActive }) => `bottom-nav-item ${isActive ? 'active' : ''}`}>
+          <span className="material-symbols-outlined bottom-nav-icon">leaderboard</span>
+          <span className="bottom-nav-label">Leaderboard</span>
+        </NavLink>
+        <NavLink to="/events" className={({ isActive }) => `bottom-nav-item ${isActive ? 'active' : ''}`}>
+          <span className="material-symbols-outlined bottom-nav-icon">event</span>
+          <span className="bottom-nav-label">Events</span>
+        </NavLink>
+      </nav>
     </div>
   );
 }
+

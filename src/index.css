@@ -93,14 +93,31 @@ select {
   z-index: 60;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
   .app-shell {
-    padding-top: 5.25rem;
+    padding-top: 4.75rem;
+    padding-bottom: 5.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
   .topbar {
-    left: 1.25rem;
+    top: 0;
+    left: 0;
+    right: 0;
     transform: none;
-    width: calc(100% - 2.5rem);
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0 0 16px 16px;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    padding: 0.65rem 1rem;
+    background: rgba(255, 253, 248, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  [data-theme="dark"] .topbar {
+    background: rgba(24, 35, 29, 0.92);
   }
 }
 
@@ -562,12 +579,16 @@ select {
   margin: 0 0 0.75rem;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
   .topbar {
-    align-items: stretch;
+    align-items: center;
+    justify-content: space-between;
   }
 
-  .nav,
+  .desktop-nav {
+    display: none !important;
+  }
+
   .user-chip,
   .assignment-head,
   .events-head,
@@ -2367,6 +2388,137 @@ select {
   color: var(--ink);
   background: var(--line);
 }
+
+/* ==========================================================================
+   Mobile Bottom Navigation Bar & Native Mobile App Experience Styles
+   ========================================================================== */
+
+/* Desktop view: bottom nav hidden */
+.bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(60px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: rgba(255, 253, 248, 0.94);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-top: 1px solid var(--line);
+    z-index: 1000;
+    align-items: center;
+    justify-content: space-around;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  [data-theme="dark"] .bottom-nav {
+    background: rgba(24, 35, 29, 0.94);
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex: 1;
+    height: 100%;
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    transition: color 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.15s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    padding-top: 4px;
+  }
+
+  .bottom-nav-icon {
+    font-size: 24px;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease;
+  }
+
+  .bottom-nav-label {
+    line-height: 1;
+    transition: opacity 0.2s ease;
+  }
+
+  .bottom-nav-item:active {
+    transform: scale(0.92);
+  }
+
+  .bottom-nav-item.active {
+    color: var(--brand);
+    font-weight: 700;
+  }
+
+  .bottom-nav-item.active .bottom-nav-icon {
+    transform: translateY(-2px) scale(1.1);
+  }
+
+  .bottom-nav-item.active::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 3px;
+    background: var(--brand);
+    border-radius: 0 0 4px 4px;
+  }
+
+  /* Page container mobile polish */
+  .detail-page-container {
+    padding: 0.5rem 0.5rem 2rem;
+  }
+
+  /* Fix celebration toast overlay position on mobile so it clears bottom nav bar */
+  .celebration-toast-overlay {
+    bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* Touch optimizations */
+  button, .btn, input, select, textarea, a {
+    touch-action: manipulation;
+  }
+
+  .btn {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Mobile card & panel spacing */
+  .concept-banner,
+  .assignment,
+  .event-card,
+  .panel,
+  .mod-panel,
+  .auth-card,
+  .sidebar-card,
+  .detail-card {
+    border-radius: 14px;
+    padding: 1rem;
+  }
+
+  /* Tables horizontal touch scroll */
+  .table-wrap {
+    border-radius: 12px;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 
 
 
