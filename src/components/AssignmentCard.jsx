@@ -37,7 +37,7 @@ export default function AssignmentCard({ assignment, done, doneCount, totalUsers
         </div>
 
         <div className="assignment-row-info">
-          <h3 className="assignment-row-title">{assignment.title}</h3>
+          <h3 className="assignment-row-title" title={assignment.title}>{assignment.title}</h3>
           <span className="assignment-row-date muted">{assignment.date}</span>
         </div>
       </div>

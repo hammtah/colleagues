@@ -769,6 +769,10 @@ select {
   margin-top: 1rem;
 }
 
+.calendar-focus-layout > * {
+  min-width: 0;
+}
+
 @media (max-width: 768px) {
   .calendar-focus-layout {
     grid-template-columns: 1fr;
@@ -779,6 +783,7 @@ select {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  min-width: 0;
 }
 
 .focus-header {
@@ -1263,6 +1268,7 @@ select {
   cursor: pointer;
   transition: box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
   user-select: none;
+  min-width: 0;
 }
 
 .assignment-row:hover {
@@ -1320,6 +1326,7 @@ select {
   align-items: center;
   gap: 0.85rem;
   min-width: 0;
+  flex: 1;
 }
 
 .assignment-done-circle {
@@ -1343,6 +1350,7 @@ select {
 
 .assignment-row-info {
   min-width: 0;
+  flex: 1;
 }
 
 .assignment-row-title {
@@ -1352,6 +1360,7 @@ select {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .assignment-row-date {
