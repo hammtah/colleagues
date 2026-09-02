@@ -1,5 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react';
-import { BrowserRouter as Router, Routes as AppRoutes, Route as AppRoute } from 'react-router-dom';
+import { BrowserRouter as Router, Routes as AppRoutes, Route as AppRoute, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './AuthContext';
 import { ThemeProvider } from './ThemeContext';
 import Layout from './components/Layout';
@@ -15,7 +14,10 @@ function ProtectedRoute({ children }) {
   if (loading) {
     return (
       <div className="auth-page">
-        <p className="muted">Loading…</p>
+        <div className="auth-loading">
+          <div className="auth-loading-spinner" />
+          <p className="muted">Loading…</p>
+        </div>
       </div>
     );
   }
