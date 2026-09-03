@@ -5,6 +5,7 @@ import {
   deleteConcept,
   updateConcept,
   createAssignment,
+  updateAssignment,
 } from '../hooks';
 import { getLocalDateString } from '../utils/date';
 
@@ -209,23 +210,35 @@ export function ConceptManager({ concepts, selectedConceptId, onSelect }) {
   );
 }
 
-export function AssignmentComposer({ conceptId, defaultDate }) {
+export function AssignmentComposer({ conceptId, defaultDate, editingAssignment, onCancel, onSaved }) {
   const { user } = useAuth();
   const [form, setForm] = useState({
     title: '',
     link: '',
     note: '',
     date: defaultDate || getLocalDateString(),
+    linkMode: 'required',
+    noteMode: 'optional',
   });
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(Boolean(editingAssignment));
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    if (defaultDate) {
+    if (editingAssignment) {
+      setForm({
+        title: editingAssignment.title || '',
+        link: editingAssignment.link || '',
+        note: editingAssignment.note || '',
+        date: editingAssignment.date || defaultDate || getLocalDateString(),
+        linkMode: editingAssignment.linkMode || 'required',
+        noteMode: editingAssignment.noteMode || 'optional',
+      });
+      setOpen(true);
+    } else if (defaultDate) {
       setForm((prev) => ({ ...prev, date: defaultDate }));
     }
-  }, [defaultDate]);
+  }, [defaultDate, editingAssignment]);
 
   const onChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -233,30 +246,39 @@ export function AssignmentComposer({ conceptId, defaultDate }) {
 
   const submit = async (e) => {
     e.preventDefault();
-    if (!conceptId) {
+    if (!conceptId && !editingAssignment) {
       setMessage('Select or create a concept first.');
       return;
     }
     setSaving(true);
     setMessage('');
     try {
-      await createAssignment(form, conceptId, user.uid);
-      setForm({
-        title: '',
-        link: '',
-        note: '',
-        date: defaultDate || getLocalDateString(),
-      });
-      setMessage('Assignment posted.');
-      setOpen(false);
+      if (editingAssignment) {
+        await updateAssignment(editingAssignment.id, form);
+        setMessage('Assignment updated.');
+        if (onSaved) onSaved();
+      } else {
+        await createAssignment(form, conceptId, user.uid);
+        setForm({
+          title: '',
+          link: '',
+          note: '',
+          date: defaultDate || getLocalDateString(),
+          linkMode: 'required',
+          noteMode: 'optional',
+        });
+        setMessage('Assignment posted.');
+        setOpen(false);
+        if (onSaved) onSaved();
+      }
     } catch (err) {
-      setMessage(err.message || 'Failed to post assignment');
+      setMessage(err.message || 'Failed to save assignment');
     } finally {
       setSaving(false);
     }
   };
 
-  if (!conceptId) {
+  if (!conceptId && !editingAssignment) {
     return (
       <section className="mod-panel">
         <p className="muted">Create or select a concept before posting assignments.</p>
@@ -264,42 +286,95 @@ export function AssignmentComposer({ conceptId, defaultDate }) {
     );
   }
 
+  const isNoFields = form.linkMode === 'none' && form.noteMode === 'none';
+
   return (
-    <section className="mod-panel">
-      <button type="button" className="btn" onClick={() => setOpen((v) => !v)}>
-        {open ? 'Close' : 'Post assignment'}
-      </button>
+    <section className={editingAssignment ? '' : 'mod-panel'}>
+      {!editingAssignment && (
+        <button type="button" className="btn" onClick={() => setOpen((v) => !v)}>
+          {open ? 'Close' : 'Post assignment'}
+        </button>
+      )}
       {open && (
         <form className="stack-form" onSubmit={submit}>
+          {editingAssignment && <h3>Edit Assignment</h3>}
           <label>
-            Title
-            <input name="title" value={form.title} onChange={onChange} required />
+            Assignment Title <span className="field-required">*</span>
+            <input name="title" value={form.title} onChange={onChange} required placeholder="e.g. Two Sum problem or Chapter 1 Reading" />
           </label>
           <label>
-            Link
+            Problem / Resource Link <span className="field-optional">(optional)</span>
             <input
               name="link"
               type="url"
               value={form.link}
               onChange={onChange}
-              placeholder="https://"
-              required
+              placeholder="https://leetcode.com/... or https://..."
             />
           </label>
           <label>
-            Note (optional)
-            <textarea name="note" value={form.note} onChange={onChange} rows={2} />
+            Instructions / Note <span className="field-optional">(optional)</span>
+            <textarea name="note" value={form.note} onChange={onChange} rows={2} placeholder="Optional instructions or notes for members..." />
           </label>
           <label>
-            Date
+            Date <span className="field-required">*</span>
             <input type="date" name="date" value={form.date} onChange={onChange} required />
           </label>
-          <button type="submit" className="btn" disabled={saving}>
-            Publish
-          </button>
+
+          {/* Member Submission Settings */}
+          <div className="submission-config-box">
+            <div className="submission-config-header">
+              <span className="material-symbols-outlined" style={{ fontSize: '18px', color: 'var(--brand)' }}>tune</span>
+              <strong>Member Submission Fields</strong>
+            </div>
+            
+            <div className="row" style={{ marginTop: '0.5rem' }}>
+              <label>
+                Solution Link Field
+                <select name="linkMode" value={form.linkMode} onChange={onChange}>
+                  <option value="required">Mandatory Link (Required)</option>
+                  <option value="optional">Optional Link</option>
+                  <option value="none">No Link (Disabled)</option>
+                </select>
+              </label>
+
+              <label>
+                Notes / Insight Field
+                <select name="noteMode" value={form.noteMode} onChange={onChange}>
+                  <option value="optional">Optional Notes</option>
+                  <option value="required">Mandatory Notes (Required)</option>
+                  <option value="none">No Notes (Disabled)</option>
+                </select>
+              </label>
+            </div>
+
+            <div className="submission-config-hint">
+              <span className="material-symbols-outlined" style={{ fontSize: '16px', verticalAlign: 'middle', marginRight: '0.3rem' }}>info</span>
+              {isNoFields ? (
+                <span>No submission fields required. Members complete this assignment with a <strong>single click</strong>.</span>
+              ) : form.linkMode === 'required' ? (
+                <span>Members <strong>must provide a solution link</strong> to mark completed.</span>
+              ) : form.noteMode === 'required' ? (
+                <span>Members <strong>must write notes/key insights</strong> to mark completed.</span>
+              ) : (
+                <span>Members can submit optional links/notes when completing.</span>
+              )}
+            </div>
+          </div>
+
+          <div className="form-actions" style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+            <button type="submit" className="btn" disabled={saving}>
+              {editingAssignment ? 'Save Assignment' : 'Publish Assignment'}
+            </button>
+            {editingAssignment && onCancel && (
+              <button type="button" className="btn ghost" onClick={onCancel} disabled={saving}>
+                Cancel
+              </button>
+            )}
+          </div>
         </form>
       )}
-      {message && <p className="muted">{message}</p>}
+      {message && <p className="muted" style={{ marginTop: '0.5rem' }}>{message}</p>}
     </section>
   );
 }

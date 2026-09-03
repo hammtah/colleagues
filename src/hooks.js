@@ -190,12 +190,36 @@ export async function createAssignment(data, conceptId, uid) {
   await addDoc(collection(db, 'assignments'), {
     conceptId,
     title: data.title.trim(),
-    link: data.link.trim(),
+    link: (data.link || '').trim(),
     note: (data.note || '').trim(),
     date: data.date,
+    linkMode: data.linkMode || 'required',
+    noteMode: data.noteMode || 'optional',
     createdAt: serverTimestamp(),
     createdBy: uid,
   });
+}
+
+export async function updateAssignment(assignmentId, data) {
+  await updateDoc(doc(db, 'assignments', assignmentId), {
+    title: data.title.trim(),
+    link: (data.link || '').trim(),
+    note: (data.note || '').trim(),
+    date: data.date,
+    linkMode: data.linkMode || 'required',
+    noteMode: data.noteMode || 'optional',
+    updatedAt: serverTimestamp(),
+  });
+}
+
+export async function deleteAssignment(assignmentId) {
+  const commentsSnap = await getDocs(
+    collection(db, 'assignments', assignmentId, 'comments'),
+  );
+  const batch = writeBatch(db);
+  commentsSnap.docs.forEach((c) => batch.delete(c.ref));
+  batch.delete(doc(db, 'assignments', assignmentId));
+  await batch.commit();
 }
 
 export async function setCompletion(assignmentId, userId, done, submissionData = {}) {

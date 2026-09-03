@@ -1858,6 +1858,36 @@ select {
   margin-top: 0.5rem;
 }
 
+/* Submission Config Box in Moderator Forms */
+.submission-config-box {
+  background: var(--surface-hover);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 0.5rem;
+}
+
+.submission-config-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+
+.submission-config-hint {
+  margin-top: 0.75rem;
+  font-size: 0.83rem;
+  color: var(--muted);
+  display: flex;
+  align-items: flex-start;
+  line-height: 1.4;
+  padding: 0.5rem 0.75rem;
+  background: var(--surface);
+  border-radius: 8px;
+  border: 1px dashed var(--line);
+}
+
 .primary-btn {
   display: inline-flex;
   align-items: center;
