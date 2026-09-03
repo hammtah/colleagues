@@ -165,12 +165,18 @@ export default function Feed() {
     return getCalendarCells(calendarYear, calendarMonth);
   }, [calendarYear, calendarMonth]);
 
-  const getDayStateClass = (dateStr, hasAssignmentsOnDay, isAllCompleted) => {
-    if (!dateStr || !hasAssignmentsOnDay) return 'plain';
-    if (isAllCompleted) return 'completed';
-    if (dateStr < todayStr) return 'overdue';
-    if (dateStr > todayStr) return 'upcoming';
-    return 'today-pending';
+  // Returns { stateClass, donePct } for a calendar day
+  const getDayState = (dateStr, dayTasks) => {
+    if (!dateStr || dayTasks.length === 0) return { stateClass: 'plain', donePct: null };
+    const completedCount = dayTasks.filter(
+      (a) => completionMap[`${a.id}_${user.uid}`] === true
+    ).length;
+    const total = dayTasks.length;
+    const isAllCompleted = completedCount === total;
+    if (isAllCompleted) return { stateClass: 'completed', donePct: null };
+    if (dateStr < todayStr) return { stateClass: 'overdue', donePct: completedCount / total };
+    if (dateStr > todayStr) return { stateClass: 'upcoming', donePct: null };
+    return { stateClass: 'today-pending', donePct: null };
   };
 
   if (!loading && concepts.length === 0) {
@@ -288,10 +294,10 @@ export default function Feed() {
 
                 {/* Day Cells */}
                 {calendarCells.map((cell, idx) => {
+
                   const isSelected = cell.isCurrentMonth && cell.dateStr === selectedDate;
                   let cellClass = 'calendar-day';
-                  let hasAssignmentsOnDay = false;
-                  let isAllCompleted = false;
+                  let overduePartialPct = null;
 
                   if (!cell.isCurrentMonth) {
                     cellClass += ' empty';
@@ -299,19 +305,22 @@ export default function Feed() {
                     const dayTasks = assignments.filter(
                       (a) => a.conceptId === selectedConceptId && a.date === cell.dateStr
                     );
-                    if (dayTasks.length > 0) {
-                      hasAssignmentsOnDay = true;
-                      isAllCompleted = dayTasks.every(
-                        (a) => completionMap[`${a.id}_${user.uid}`] === true
-                      );
-                    }
 
                     if (isSelected) {
                       cellClass += ' active';
                     } else {
-                      cellClass += ` ${getDayStateClass(cell.dateStr, hasAssignmentsOnDay, isAllCompleted)}`;
+                      const { stateClass, donePct } = getDayState(cell.dateStr, dayTasks);
+                      cellClass += ` ${stateClass}`;
+                      if (stateClass === 'overdue' && donePct !== null && donePct > 0) {
+                        cellClass += ' overdue-partial';
+                        overduePartialPct = donePct;
+                      }
                     }
                   }
+
+                  // SVG ring: r=15 so stroke stays within the cell bounds
+                  // circumference = 2 * π * 15 ≈ 94.25
+                  const C = 94.25;
 
                   return (
                     <div
@@ -327,6 +336,20 @@ export default function Feed() {
                       }}
                     >
                       {cell.day}
+                      {overduePartialPct !== null && (
+                        <svg className="partial-ring-svg" viewBox="0 0 34 34" aria-hidden="true">
+                          <circle
+                            cx="17" cy="17" r="15"
+                            fill="none"
+                            stroke="var(--danger)"
+                            strokeWidth="2"
+                            strokeDasharray={`${((1 - overduePartialPct) * C).toFixed(2)} ${(overduePartialPct * C).toFixed(2)}`}
+                            strokeDashoffset={(overduePartialPct * C).toFixed(2)}
+                            strokeLinecap="round"
+                            transform="rotate(-90 17 17)"
+                          />
+                        </svg>
+                      )}
                     </div>
                   );
                 })}

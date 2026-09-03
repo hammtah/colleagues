@@ -918,6 +918,7 @@ select {
   cursor: pointer;
   user-select: none;
   transition: all 0.15s ease;
+  position: relative;
 }
 
 .calendar-day.empty {
@@ -952,6 +953,20 @@ select {
 .calendar-day.overdue {
   border: 2px solid var(--danger);
   color: var(--ink);
+}
+
+/* Partial overdue: SVG ring handles the arc, no CSS border needed */
+.calendar-day.overdue-partial {
+  border: 2px solid transparent;
+}
+
+.partial-ring-svg {
+  position: absolute;
+  inset: -2px;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  pointer-events: none;
+  overflow: visible;
 }
 
 .calendar-day.active {
