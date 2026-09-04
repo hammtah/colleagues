@@ -2593,6 +2593,188 @@ select {
   }
 }
 
+/* ───────────────────────────────────────────
+   Concept Detail Page Styles
+─────────────────────────────────────────── */
+.concept-detail-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding-bottom: 3rem;
+}
+
+.breadcrumb-nav {
+  margin-bottom: 1.5rem;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  transition: background 0.15s ease, border-color 0.15s ease;
+  cursor: pointer;
+}
+
+.back-btn:hover {
+  background: var(--line);
+}
+
+.concept-detail-hero {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 2rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 1.75rem;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+@media (max-width: 640px) {
+  .concept-detail-hero {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    padding: 1.25rem;
+  }
+}
+
+.concept-hero-image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.concept-hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.concept-hero-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.concept-hero-title {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.concept-hero-desc {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0 0 1.25rem;
+}
+
+.concept-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.concept-hero-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.progress-pct {
+  color: var(--brand);
+  font-weight: 700;
+}
+
+.progress-bar-large {
+  width: 100%;
+  height: 10px;
+  background: var(--line);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-fill-large {
+  height: 100%;
+  background: var(--brand);
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+.concept-assignments-section {
+  margin-top: 2rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1.25rem;
+}
+
+.section-header h2 {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.5rem;
+  margin: 0;
+  color: var(--ink);
+}
+
+.empty-assignments-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  background: var(--surface);
+  border: 1px dashed var(--line);
+  border-radius: 16px;
+  text-align: center;
+}
+
+.empty-assignments-box .empty-icon {
+  font-size: 48px;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+  opacity: 0.6;
+}
+
 
 
 

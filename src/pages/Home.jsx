@@ -83,7 +83,7 @@ export default function Home() {
   }, [concepts, assignments, completions, loading, user]);
 
   const handleSelectConcept = (conceptId) => {
-    navigate(`/feed?concept=${conceptId}`);
+    navigate(`/concept/${conceptId}`);
   };
 
   return (

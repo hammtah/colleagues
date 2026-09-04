@@ -6,6 +6,7 @@ import Events from './pages/Events';
 import Home from './pages/Home';
 import Feed from './pages/Feed';
 import AssignmentDetail from './pages/AssignmentDetail';
+import ConceptDetail from './pages/ConceptDetail';
 import Login from './pages/Login';
 import Leaderboard from './pages/Leaderboard';
 
@@ -43,6 +44,7 @@ export default function App() {
               }
             >
               <AppRoute index element={<Home />} />
+              <AppRoute path="concept/:conceptId" element={<ConceptDetail />} />
               <AppRoute path="feed" element={<Feed />} />
               <AppRoute path="assignment/:assignmentId" element={<AssignmentDetail />} />
               <AppRoute path="leaderboard" element={<Leaderboard />} />
