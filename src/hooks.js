@@ -52,7 +52,7 @@ export function useAssignments(conceptId = null) {
       q = query(
         collection(db, 'assignments'),
         where('conceptId', '==', conceptId),
-        orderBy('date', 'desc'),
+        orderBy('date', 'asc'),
       );
     } else {
       q = query(collection(db, 'assignments'), orderBy('date', 'desc'));
