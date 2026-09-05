@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import confetti from 'canvas-confetti';
 import { useAuth } from '../AuthContext';
 import CommentThread from '../components/CommentThread';
 import { AssignmentComposer } from '../components/ModeratorForms';
+import GamifiedCompletionModal from '../components/GamifiedCompletionModal';
 import {
   useAssignments,
   useCompletions,
   useUsers,
+  useEvents,
   setCompletion,
   deleteAssignment,
 } from '../hooks';
@@ -116,6 +117,7 @@ export default function AssignmentDetail() {
   const { assignments, loading: assignmentsLoading } = useAssignments(conceptId || null);
   const { completions, loading: completionsLoading } = useCompletions();
   const { users, loading: usersLoading } = useUsers();
+  const { events, loading: eventsLoading } = useEvents();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isModEditing, setIsModEditing] = useState(false);
@@ -124,9 +126,10 @@ export default function AssignmentDetail() {
   const [formError, setFormError] = useState('');
   const [busy, setBusy] = useState(false);
   const [forceExpandedAll, setForceExpandedAll] = useState(null);
-  const [showCelebration, setShowCelebration] = useState(false);
+  const [showGameModal, setShowGameModal] = useState(false);
+  const [gamifiedPrevPoints, setGamifiedPrevPoints] = useState(0);
 
-  const loading = assignmentsLoading || completionsLoading || usersLoading;
+  const loading = assignmentsLoading || completionsLoading || usersLoading || eventsLoading;
 
   const assignment = useMemo(
     () => assignments.find((a) => a.id === assignmentId) || null,
@@ -155,6 +158,16 @@ export default function AssignmentDetail() {
   }, [assignmentCompletions, assignment, user]);
 
   const myDone = Boolean(myCompletion);
+
+  // Compute user stats (completed count & total points)
+  const myStats = useMemo(() => {
+    if (!user) return { totalPoints: 0, completedCount: 0 };
+    const userDoneCompletions = completions.filter((c) => c.userId === user.uid && c.done === true);
+    const userRsvpEvents = events.filter((e) => e.rsvps?.includes(user.uid));
+    const completedCount = userDoneCompletions.length;
+    const totalPoints = completedCount * 20 + userRsvpEvents.length * 50;
+    return { totalPoints, completedCount };
+  }, [user, completions, events]);
 
   // Sync form fields when myCompletion changes or when opening edit mode
   useEffect(() => {
@@ -189,19 +202,6 @@ export default function AssignmentDetail() {
 
   const locked = assignment ? isFutureDateString(assignment.date, getLocalDateString()) : false;
 
-  const triggerConfetti = () => {
-    try {
-      confetti({
-        particleCount: 120,
-        spread: 80,
-        origin: { y: 0.6 },
-        colors: ['#22c55e', '#10b981', '#3b82f6', '#f59e0b', '#ec4899'],
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const handleStartEdit = () => {
     if (myCompletion) {
       setSolutionUrl(myCompletion.solutionUrl || '');
@@ -229,11 +229,14 @@ export default function AssignmentDetail() {
     setBusy(true);
     try {
       const nextDone = !myDone;
+      const calculatedPrev = myDone
+        ? Math.max(0, myStats.totalPoints - 20)
+        : myStats.totalPoints;
+      setGamifiedPrevPoints(calculatedPrev);
+
       await setCompletion(assignment.id, user.uid, nextDone);
       if (nextDone) {
-        setShowCelebration(true);
-        triggerConfetti();
-        setTimeout(() => setShowCelebration(false), 5000);
+        setShowGameModal(true);
       }
     } catch (err) {
       console.error(err);
@@ -270,18 +273,17 @@ export default function AssignmentDetail() {
     setBusy(true);
     setFormError('');
     try {
+      const calculatedPrev = myDone
+        ? Math.max(0, myStats.totalPoints - 20)
+        : myStats.totalPoints;
+      setGamifiedPrevPoints(calculatedPrev);
+
       await setCompletion(assignment.id, user.uid, true, {
         solutionUrl: url,
         notes: noteText,
       });
       setIsEditing(false);
-      setShowCelebration(true);
-      triggerConfetti();
-
-      // Auto dismiss notification after 5 seconds
-      setTimeout(() => {
-        setShowCelebration(false);
-      }, 5000);
+      setShowGameModal(true);
     } catch (err) {
       console.error(err);
       setFormError('Failed to submit solution. Please try again.');
@@ -725,28 +727,17 @@ export default function AssignmentDetail() {
         </aside>
       </div>
 
-      {/* Celebration Toast Notification */}
-      {showCelebration && (
-        <div className="celebration-toast-overlay">
-          <div className="celebration-toast">
-            <div className="celebration-icon-wrap">
-              <span className="material-symbols-outlined celebration-check">task_alt</span>
-            </div>
-            <div className="celebration-text">
-              <h3>🎉 Assignment Completed!</h3>
-              <p>Awesome work! Your solution & details have been saved.</p>
-            </div>
-            <button
-              type="button"
-              className="celebration-close-btn"
-              onClick={() => setShowCelebration(false)}
-              aria-label="Close notification"
-            >
-              <span className="material-symbols-outlined">close</span>
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Gamified Points Completion Modal */}
+      <GamifiedCompletionModal
+        isOpen={showGameModal}
+        onClose={() => setShowGameModal(false)}
+        prevPoints={gamifiedPrevPoints}
+        pointsAdded={20}
+        assignmentTitle={assignment?.title}
+        userName={user?.displayName || user?.email?.split('@')[0] || 'Member'}
+        userEmail={user?.email || ''}
+        userPhotoUrl={user?.photoURL || ''}
+      />
     </div>
   );
 }
