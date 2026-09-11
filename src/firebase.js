@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getAuth, connectAuthEmulator } from 'firebase/auth';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 
 const VITE_FIREBASE_API_KEY="AIzaSyDHUyGoWT-KNakoo2xkY1MK_56UZZPKNTY"
 const VITE_FIREBASE_AUTH_DOMAIN="colleagues-73a44.firebaseapp.com"
@@ -36,3 +36,9 @@ const app = isFirebaseConfigured ? initializeApp(firebaseConfig) : null;
 
 export const auth = app ? getAuth(app) : null;
 export const db = app ? getFirestore(app) : null;
+
+// Connect to local emulators in dev mode (never touches real Firebase data)
+if (import.meta.env.DEV && app) {
+  connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
+  connectFirestoreEmulator(db, 'localhost', 8080);
+}

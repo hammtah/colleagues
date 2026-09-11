@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { getAvatarBackgroundColor } from '../utils/avatar';
 
 const getUserAvatarUrl = (name, email) => {
@@ -73,7 +74,7 @@ export default function GamifiedCompletionModal({
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div
       className="points-modal-overlay"
       onClick={onClose}
@@ -140,6 +141,7 @@ export default function GamifiedCompletionModal({
           Done
         </button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

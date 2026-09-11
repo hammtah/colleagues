@@ -2786,9 +2786,9 @@ select {
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding: 15vh 1.25rem 1.25rem;
+  padding: 1.25rem;
   animation: modalFadeIn 0.2s ease-out;
 }
 
