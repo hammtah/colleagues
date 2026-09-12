@@ -7,7 +7,6 @@ export default function Layout() {
   const { profile, isModerator, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
-
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -24,7 +23,7 @@ export default function Layout() {
           <NavLink to="/leaderboard">Leaderboard</NavLink>
           <NavLink to="/progress" className="nav-link-with-badge">
             Progress
-            <span className="nav-badge-pill">NEW</span>
+              <span className="nav-badge-pill">NEW</span>
           </NavLink>
           <NavLink to="/events">Events</NavLink>
         </nav>
@@ -88,7 +87,7 @@ export default function Layout() {
         <NavLink to="/progress" className={({ isActive }) => `bottom-nav-item ${isActive ? 'active' : ''}`}>
           <div className="bottom-nav-icon-wrap">
             <span className="material-symbols-outlined bottom-nav-icon">bar_chart</span>
-            <span className="nav-badge-pill mobile-badge">NEW</span>
+              <span className="nav-badge-pill mobile-badge">NEW</span>
           </div>
           <span className="bottom-nav-label">Progress</span>
         </NavLink>
@@ -100,4 +99,3 @@ export default function Layout() {
     </div>
   );
 }
-
