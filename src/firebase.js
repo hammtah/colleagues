@@ -38,7 +38,7 @@ export const auth = app ? getAuth(app) : null;
 export const db = app ? getFirestore(app) : null;
 
 // Connect to local emulators in dev mode (never touches real Firebase data)
-if (import.meta.env.DEV && app) {
-  connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
-  connectFirestoreEmulator(db, 'localhost', 8080);
-}
+// if (import.meta.env.DEV && app) {
+//   connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
+//   connectFirestoreEmulator(db, 'localhost', 8080);
+// }

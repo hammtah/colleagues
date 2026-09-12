@@ -22,6 +22,10 @@ export default function Layout() {
           </NavLink>
           <NavLink to="/feed">Feed</NavLink>
           <NavLink to="/leaderboard">Leaderboard</NavLink>
+          <NavLink to="/progress" className="nav-link-with-badge">
+            Progress
+            <span className="nav-badge-pill">NEW</span>
+          </NavLink>
           <NavLink to="/events">Events</NavLink>
         </nav>
         <div className="topbar-actions">
@@ -80,6 +84,13 @@ export default function Layout() {
         <NavLink to="/leaderboard" className={({ isActive }) => `bottom-nav-item ${isActive ? 'active' : ''}`}>
           <span className="material-symbols-outlined bottom-nav-icon">leaderboard</span>
           <span className="bottom-nav-label">Leaderboard</span>
+        </NavLink>
+        <NavLink to="/progress" className={({ isActive }) => `bottom-nav-item ${isActive ? 'active' : ''}`}>
+          <div className="bottom-nav-icon-wrap">
+            <span className="material-symbols-outlined bottom-nav-icon">bar_chart</span>
+            <span className="nav-badge-pill mobile-badge">NEW</span>
+          </div>
+          <span className="bottom-nav-label">Progress</span>
         </NavLink>
         <NavLink to="/events" className={({ isActive }) => `bottom-nav-item ${isActive ? 'active' : ''}`}>
           <span className="material-symbols-outlined bottom-nav-icon">event</span>
