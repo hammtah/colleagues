@@ -4,6 +4,7 @@ import { useAuth } from '../AuthContext';
 import CommentThread from '../components/CommentThread';
 import { AssignmentComposer } from '../components/ModeratorForms';
 import GamifiedCompletionModal from '../components/GamifiedCompletionModal';
+import SolutionReactions from '../components/SolutionReactions';
 import {
   useAssignments,
   useCompletions,
@@ -14,7 +15,7 @@ import {
 } from '../hooks';
 import { getLocalDateString, isFutureDateString } from '../utils/date';
 
-function ColleagueCard({ item, currentUserId, forceExpanded }) {
+function ColleagueCard({ item, currentUserId, usersById, forceExpanded }) {
   const [expanded, setExpanded] = useState(false);
   const isMe = item.userId === currentUserId;
 
@@ -70,7 +71,7 @@ function ColleagueCard({ item, currentUserId, forceExpanded }) {
       </div>
 
       {/* Expanded Content Area */}
-      {expanded && (
+      {expanded ? (
         <div className="colleague-card-body">
           {/* Solution Link */}
           {item.solutionUrl ? (
@@ -100,6 +101,14 @@ function ColleagueCard({ item, currentUserId, forceExpanded }) {
           {!item.solutionUrl && !groupedNotes && (
             <span className="muted" style={{ fontSize: '0.85rem' }}>✓ Completed (No submission details required)</span>
           )}
+
+          <div style={{ marginTop: '0.75rem', paddingTop: '0.5rem', borderTop: '1px dashed var(--line)' }}>
+            <SolutionReactions completion={item} currentUserId={currentUserId} usersById={usersById} />
+          </div>
+        </div>
+      ) : (
+        <div className="colleague-card-footer-reactions">
+          <SolutionReactions completion={item} currentUserId={currentUserId} usersById={usersById} />
         </div>
       )}
     </div>
@@ -616,6 +625,10 @@ export default function AssignmentDetail() {
                     </div>
                   )}
 
+                  <div className="submission-view-reactions" style={{ marginTop: '0.75rem', marginBottom: '0.75rem' }}>
+                    <SolutionReactions completion={myCompletion} currentUserId={user?.uid} usersById={usersById} />
+                  </div>
+
                   <div className="submission-view-actions">
                     <button type="button" className="btn ghost" onClick={handleStartEdit} disabled={busy}>
                       <span className="material-symbols-outlined" style={{ fontSize: '18px', verticalAlign: 'middle', marginRight: '0.3rem' }}>
@@ -718,6 +731,7 @@ export default function AssignmentDetail() {
                     key={item.id}
                     item={item}
                     currentUserId={user?.uid}
+                    usersById={usersById}
                     forceExpanded={forceExpandedAll}
                   />
                 ))}

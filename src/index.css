@@ -2243,6 +2243,95 @@ select {
 }
 
 /* ───────────────────────────────────────────
+   Solution Reactions (🧠 👍 🔥)
+─────────────────────────────────────────── */
+.solution-reactions-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.reaction-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.reaction-chip:hover {
+  background: var(--brand-soft);
+  border-color: var(--brand);
+  transform: translateY(-1px) scale(1.04);
+}
+
+.reaction-chip:active {
+  transform: translateY(0) scale(0.96);
+}
+
+.reaction-chip.active {
+  background: var(--brand-soft);
+  border-color: var(--brand);
+  box-shadow: 0 2px 8px rgba(15, 107, 76, 0.15);
+  font-weight: 700;
+}
+
+.reaction-chip.busy {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.reaction-emoji {
+  font-size: 0.95rem;
+  display: inline-block;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.reaction-chip:hover .reaction-emoji {
+  transform: scale(1.15);
+}
+
+.reaction-count {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-left: 0.15rem;
+}
+
+.reaction-chip.active .reaction-count {
+  color: var(--brand);
+}
+
+.reaction-chip.zero .reaction-count {
+  opacity: 0.55;
+  font-weight: 600;
+}
+
+.colleague-card-footer-reactions {
+  padding-top: 0.25rem;
+}
+
+[data-theme="dark"] .reaction-chip {
+  background: #121915;
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .reaction-chip:hover,
+[data-theme="dark"] .reaction-chip.active {
+  background: rgba(15, 107, 76, 0.22);
+  border-color: var(--brand);
+}
+
+/* ───────────────────────────────────────────
    TopBar Actions & Theme Toggle Button
 ─────────────────────────────────────────── */
 .topbar-actions {

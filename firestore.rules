@@ -60,11 +60,24 @@ service cloud.firestore {
 
     match /completions/{completionId} {
       allow read: if isSignedIn();
-      allow create, update: if isSignedIn()
+      allow create: if isSignedIn()
         && request.resource.data.userId == request.auth.uid
         && request.resource.data.keys().hasAll(['assignmentId', 'userId', 'done', 'updatedAt'])
         && request.resource.data.done is bool
         && completionId == request.resource.data.assignmentId + '_' + request.auth.uid;
+      allow update: if isSignedIn()
+        && (
+          (request.resource.data.userId == request.auth.uid
+            && request.resource.data.keys().hasAll(['assignmentId', 'userId', 'done', 'updatedAt'])
+            && request.resource.data.done is bool
+            && completionId == request.resource.data.assignmentId + '_' + request.auth.uid)
+          || (
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reactions'])
+            && request.resource.data.assignmentId == resource.data.assignmentId
+            && request.resource.data.userId == resource.data.userId
+            && request.resource.data.done == resource.data.done
+          )
+        );
       allow delete: if isSignedIn()
         && resource.data.userId == request.auth.uid;
     }

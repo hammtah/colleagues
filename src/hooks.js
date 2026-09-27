@@ -225,22 +225,53 @@ export async function deleteAssignment(assignmentId) {
 export async function setCompletion(assignmentId, userId, done, submissionData = {}) {
   const id = `${assignmentId}_${userId}`;
   if (!done) {
-    await setDoc(doc(db, 'completions', id), {
-      assignmentId,
-      userId,
-      done: false,
-      updatedAt: serverTimestamp(),
-    });
+    await setDoc(
+      doc(db, 'completions', id),
+      {
+        assignmentId,
+        userId,
+        done: false,
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
     return;
   }
-  await setDoc(doc(db, 'completions', id), {
-    assignmentId,
-    userId,
-    done: true,
-    solutionUrl: (submissionData.solutionUrl || '').trim(),
-    notes: (submissionData.notes || submissionData.keyInsight || '').trim(),
-    updatedAt: serverTimestamp(),
-  });
+  await setDoc(
+    doc(db, 'completions', id),
+    {
+      assignmentId,
+      userId,
+      done: true,
+      solutionUrl: (submissionData.solutionUrl || '').trim(),
+      notes: (submissionData.notes || submissionData.keyInsight || '').trim(),
+      updatedAt: serverTimestamp(),
+    },
+    { merge: true }
+  );
+}
+
+export async function toggleReaction(completionId, emoji, userId, currentReactions = {}) {
+  const ALL_EMOJIS = ['🧠', '👍', '🔥'];
+  const existingEmoji = ALL_EMOJIS.find((e) => (currentReactions[e] || []).includes(userId));
+
+  if (existingEmoji === emoji) {
+    // User clicked their existing reaction -> remove it
+    await updateDoc(doc(db, 'completions', completionId), {
+      [`reactions.${emoji}`]: arrayRemove(userId),
+    });
+  } else if (existingEmoji) {
+    // User clicked a new reaction -> remove old reaction and add new reaction
+    await updateDoc(doc(db, 'completions', completionId), {
+      [`reactions.${existingEmoji}`]: arrayRemove(userId),
+      [`reactions.${emoji}`]: arrayUnion(userId),
+    });
+  } else {
+    // User had no reaction -> add reaction
+    await updateDoc(doc(db, 'completions', completionId), {
+      [`reactions.${emoji}`]: arrayUnion(userId),
+    });
+  }
 }
 
 export async function addComment(assignmentId, userId, text) {
