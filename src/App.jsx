@@ -10,6 +10,7 @@ import ConceptDetail from './pages/ConceptDetail';
 import Login from './pages/Login';
 import Leaderboard from './pages/Leaderboard';
 import Progress from './pages/Progress';
+import Profile from './pages/Profile';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -51,6 +52,7 @@ export default function App() {
               <AppRoute path="leaderboard" element={<Leaderboard />} />
               <AppRoute path="progress" element={<Progress />} />
               <AppRoute path="events" element={<Events />} />
+              <AppRoute path="profile" element={<Profile />} />
             </AppRoute>
             <AppRoute path="*" element={<Navigate to="/" replace />} />
           </AppRoutes>

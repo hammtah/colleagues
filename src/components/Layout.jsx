@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { NavLink, Outlet, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { useTheme } from '../ThemeContext';
 import { getAvatarBackgroundColor } from '../utils/avatar';
@@ -49,18 +49,9 @@ export default function Layout() {
                 name
               )}&background=${bgColor}&color=fff&bold=true&size=128`;
               return (
-                <>
+                <Link to="/profile" className="user-avatar-link" title={`${name} · View profile`}>
                   <img src={avatarUrl} alt={name} className="user-avatar" />
-                  <div className="user-popup" role="menu">
-                    <div className="popup-name">{name}</div>
-                    <div className="popup-role muted">{isModerator ? 'moderator' : 'member'}</div>
-                    <div style={{ marginTop: '0.25rem' }}>
-                      <button type="button" className="btn ghost" onClick={logout}>
-                        Sign out
-                      </button>
-                    </div>
-                  </div>
-                </>
+                </Link>
               );
             })()}
           </div>
