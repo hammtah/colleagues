@@ -38,7 +38,7 @@ const getDurationText = (startDate, endDate) => {
 export default function Home() {
   const { user, isModerator } = useAuth();
   const navigate = useNavigate();
-  const { concepts, loading: conceptsLoading } = useConcepts();
+  const { concepts, loading: conceptsLoading } = useConcepts({ isModerator });
   const { assignments, loading: assignmentsLoading } = useAssignments();
   const { completions, loading: completionsLoading } = useCompletions();
 
@@ -109,7 +109,8 @@ export default function Home() {
             return (
               <div 
                 key={concept.id} 
-                className="concept-card"
+                className={`concept-card ${concept.hidden ? 'is-hidden-card' : ''}`}
+                style={concept.hidden ? { opacity: 0.85, border: '1px dashed var(--danger)' } : {}}
                 onClick={() => handleSelectConcept(concept.id)}
                 role="button"
                 tabIndex={0}
@@ -126,6 +127,32 @@ export default function Home() {
                     className="concept-card-image"
                     loading="lazy"
                   />
+                  {concept.hidden && (
+                    <div
+                      className="concept-card-hidden-badge"
+                      style={{
+                        position: 'absolute',
+                        top: '12px',
+                        left: '12px',
+                        backgroundColor: 'rgba(239, 68, 68, 0.95)',
+                        color: '#fff',
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        fontSize: '0.75rem',
+                        fontWeight: '700',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        zIndex: 2,
+                        backdropFilter: 'blur(4px)',
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>
+                        visibility_off
+                      </span>
+                      Hidden from Members
+                    </div>
+                  )}
                   <div className={`concept-card-badge ${statusClass}`}>
                     {concept.status === 'Completed' && (
                       <span className="badge-icon">✓</span>

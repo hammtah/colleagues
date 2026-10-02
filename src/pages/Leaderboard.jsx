@@ -9,8 +9,8 @@ const getUserAvatar = (name, email) => {
 };
 
 export default function Leaderboard() {
-  const { user } = useAuth();
-  const { concepts, loading: conceptsLoading } = useConcepts();
+  const { user, isModerator } = useAuth();
+  const { concepts, loading: conceptsLoading } = useConcepts({ isModerator });
   const { assignments, loading: assignmentsLoading } = useAssignments();
   const { completions, loading: completionsLoading } = useCompletions();
   const { events, loading: eventsLoading } = useEvents();
@@ -196,7 +196,7 @@ export default function Leaderboard() {
           <option value="overall">Overall (All Tracks)</option>
           {concepts.map((c) => (
             <option key={c.id} value={c.id}>
-              {c.title}
+              {c.title} {c.hidden ? '(Hidden)' : ''}
             </option>
           ))}
         </select>

@@ -73,7 +73,7 @@ const getCalendarCells = (year, month) => {
 export default function Feed() {
   const { user, isModerator } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { concepts, loading: conceptsLoading } = useConcepts();
+  const { concepts, loading: conceptsLoading } = useConcepts({ isModerator });
 
   const selectedConceptId = searchParams.get('concept') || '';
   const selectedConcept = concepts.find((c) => c.id === selectedConceptId) || null;
@@ -196,7 +196,25 @@ export default function Feed() {
     <div className="feed-container">
       {selectedConcept && (
         <header className="dashboard-header">
-          <h1>Track: {selectedConcept.title}</h1>
+          <h1>
+            Track: {selectedConcept.title}
+            {selectedConcept.hidden && (
+              <span
+                style={{
+                  fontSize: '0.85rem',
+                  marginLeft: '10px',
+                  padding: '3px 8px',
+                  borderRadius: '4px',
+                  backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                  color: '#ef4444',
+                  fontWeight: '600',
+                  verticalAlign: 'middle',
+                }}
+              >
+                Hidden from Members
+              </span>
+            )}
+          </h1>
           <p className="lede">{selectedConcept.description}</p>
         </header>
       )}
@@ -263,7 +281,7 @@ export default function Feed() {
                 >
                   {concepts.map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.title}
+                      {c.title} {c.hidden ? '(Hidden)' : ''}
                     </option>
                   ))}
                 </select>

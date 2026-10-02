@@ -18,7 +18,7 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebase';
 
-export function useConcepts() {
+export function useConcepts({ isModerator = false } = {}) {
   const [concepts, setConcepts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,10 +29,12 @@ export function useConcepts() {
     }
     const q = query(collection(db, 'concepts'), orderBy('startDate', 'desc'));
     return onSnapshot(q, (snap) => {
-      setConcepts(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+      const all = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      // Regular users never see hidden concepts
+      setConcepts(isModerator ? all : all.filter((c) => !c.hidden));
       setLoading(false);
     });
-  }, []);
+  }, [isModerator]);
 
   return { concepts, loading };
 }
@@ -152,6 +154,7 @@ export async function createConcept(data, uid) {
     startDate: data.startDate,
     endDate: data.endDate,
     imageUrl: (data.imageUrl || '').trim(),
+    hidden: Boolean(data.hidden),
     createdAt: serverTimestamp(),
     createdBy: uid,
   });
@@ -164,8 +167,16 @@ export async function updateConcept(conceptId, data, uid) {
     startDate: data.startDate,
     endDate: data.endDate,
     imageUrl: (data.imageUrl || '').trim(),
+    hidden: Boolean(data.hidden),
     updatedAt: serverTimestamp(),
     updatedBy: uid,
+  });
+}
+
+export async function toggleConceptHidden(conceptId, currentlyHidden) {
+  await updateDoc(doc(db, 'concepts', conceptId), {
+    hidden: !currentlyHidden,
+    updatedAt: serverTimestamp(),
   });
 }
 

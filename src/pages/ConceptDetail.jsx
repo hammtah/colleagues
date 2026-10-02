@@ -41,7 +41,7 @@ export default function ConceptDetail() {
   const navigate = useNavigate();
   const { user, isModerator } = useAuth();
 
-  const { concepts, loading: conceptsLoading } = useConcepts();
+  const { concepts, loading: conceptsLoading } = useConcepts({ isModerator });
   const { assignments, loading: assignmentsLoading } = useAssignments(conceptId);
   const { completions, loading: completionsLoading } = useCompletions();
   const { users, loading: usersLoading } = useUsers();
@@ -127,10 +127,28 @@ export default function ConceptDetail() {
         </div>
 
         <div className="concept-hero-content">
-          <h1 className="concept-hero-title">{concept.title}</h1>
+          <h1 className="concept-hero-title">
+            {concept.title}
+          </h1>
           <p className="concept-hero-desc">{concept.description}</p>
 
           <div className="concept-hero-meta">
+            {concept.hidden && (
+              <span
+                className="meta-pill"
+                style={{
+                  backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                  color: '#ef4444',
+                  borderColor: 'rgba(239, 68, 68, 0.3)',
+                  fontWeight: '600',
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
+                  visibility_off
+                </span>
+                Hidden from Members
+              </span>
+            )}
             {durationText && (
               <span className="meta-pill">
                 <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>

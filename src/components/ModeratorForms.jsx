@@ -4,6 +4,7 @@ import {
   createConcept,
   deleteConcept,
   updateConcept,
+  toggleConceptHidden,
   createAssignment,
   updateAssignment,
 } from '../hooks';
@@ -15,6 +16,7 @@ const emptyConceptForm = () => ({
   startDate: '',
   endDate: '',
   imageUrl: '',
+  hidden: false,
 });
 
 export function ConceptManager({ concepts, selectedConceptId, onSelect }) {
@@ -49,6 +51,7 @@ export function ConceptManager({ concepts, selectedConceptId, onSelect }) {
       startDate: concept.startDate || '',
       endDate: concept.endDate || '',
       imageUrl: concept.imageUrl || '',
+      hidden: Boolean(concept.hidden),
     });
     setEditingId(concept.id);
     setMode('form');
@@ -69,6 +72,19 @@ export function ConceptManager({ concepts, selectedConceptId, onSelect }) {
       resetForm();
     } catch (err) {
       setMessage(err.message || 'Failed to save concept');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const onToggleHidden = async (concept) => {
+    setSaving(true);
+    setMessage('');
+    try {
+      await toggleConceptHidden(concept.id, concept.hidden);
+      setMessage(concept.hidden ? 'Concept unhidden.' : 'Concept hidden from regular members.');
+    } catch (err) {
+      setMessage(err.message || 'Failed to update hidden status');
     } finally {
       setSaving(false);
     }
@@ -115,7 +131,25 @@ export function ConceptManager({ concepts, selectedConceptId, onSelect }) {
                 {concepts.map((c) => (
                   <li key={c.id}>
                     <div>
-                      <strong>{c.title}</strong>
+                      <strong>
+                        {c.title}{' '}
+                        {c.hidden && (
+                          <span
+                            className="badge-hidden-pill"
+                            style={{
+                              fontSize: '0.75rem',
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                              color: '#ef4444',
+                              marginLeft: '6px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            Hidden
+                          </span>
+                        )}
+                      </strong>
                       <p className="muted">
                         {c.startDate} → {c.endDate}
                       </p>
@@ -126,6 +160,14 @@ export function ConceptManager({ concepts, selectedConceptId, onSelect }) {
                       </button>
                       <button type="button" className="linkish" onClick={() => startEdit(c)}>
                         Edit
+                      </button>
+                      <button
+                        type="button"
+                        className="linkish"
+                        onClick={() => onToggleHidden(c)}
+                        disabled={saving}
+                      >
+                        {c.hidden ? 'Unhide' : 'Hide'}
                       </button>
                       <button
                         type="button"
@@ -193,7 +235,24 @@ export function ConceptManager({ concepts, selectedConceptId, onSelect }) {
                   />
                 </label>
               </div>
-              <div className="form-actions">
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  marginTop: '0.5rem',
+                  cursor: 'pointer',
+                }}
+              >
+                <input
+                  type="checkbox"
+                  name="hidden"
+                  checked={form.hidden}
+                  onChange={(e) => setForm((prev) => ({ ...prev, hidden: e.target.checked }))}
+                />
+                <span>Hide concept from regular members</span>
+              </label>
+              <div className="form-actions" style={{ marginTop: '1rem' }}>
                 <button type="button" className="btn ghost" onClick={resetForm}>
                   Cancel
                 </button>
