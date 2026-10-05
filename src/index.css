@@ -1436,6 +1436,46 @@ select {
   transform: none;
 }
 
+/* Moderator Reorder Controls */
+.assignment-reorder-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 2px;
+}
+
+.reorder-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+  padding: 0;
+}
+
+.reorder-btn:hover:not(:disabled) {
+  background: var(--brand-subtle);
+  color: var(--brand);
+}
+
+.reorder-btn:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
+.reorder-btn:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
 /* ───────────────────────────────────────────
    Assignment Detail Page
 ─────────────────────────────────────────── */

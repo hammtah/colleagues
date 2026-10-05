@@ -1,7 +1,18 @@
 import { useNavigate } from 'react-router-dom';
 import { isFutureDateString, getLocalDateString } from '../utils/date';
 
-export default function AssignmentCard({ assignment, done, doneCount, totalUsers, conceptId }) {
+export default function AssignmentCard({
+  assignment,
+  done,
+  doneCount,
+  totalUsers,
+  conceptId,
+  isModerator = false,
+  canMoveUp = false,
+  canMoveDown = false,
+  onMoveUp,
+  onMoveDown,
+}) {
   const navigate = useNavigate();
   const locked = isFutureDateString(assignment.date, getLocalDateString());
 
@@ -43,6 +54,42 @@ export default function AssignmentCard({ assignment, done, doneCount, totalUsers
       </div>
 
       <div className="assignment-row-right">
+        {/* Moderator Reorder Controls */}
+        {isModerator && (onMoveUp || onMoveDown) && (
+          <div className="assignment-reorder-actions" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="reorder-btn"
+              disabled={!canMoveUp}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (canMoveUp && onMoveUp) onMoveUp(assignment);
+              }}
+              title="Move assignment up"
+              aria-label="Move assignment up"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
+                arrow_upward
+              </span>
+            </button>
+            <button
+              type="button"
+              className="reorder-btn"
+              disabled={!canMoveDown}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (canMoveDown && onMoveDown) onMoveDown(assignment);
+              }}
+              title="Move assignment down"
+              aria-label="Move assignment down"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
+                arrow_downward
+              </span>
+            </button>
+          </div>
+        )}
+
         {/* Mini completion bar */}
         <div className="assignment-row-progress">
           <div className="progress-bar-mini">

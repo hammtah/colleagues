@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import AssignmentCard from '../components/AssignmentCard';
 import { AssignmentComposer } from '../components/ModeratorForms';
-import { useAssignments, useCompletions, useConcepts, useUsers } from '../hooks';
+import { useAssignments, useCompletions, useConcepts, useUsers, reorderAssignments } from '../hooks';
 import { getLocalDateString, parseLocalDateString } from '../utils/date';
 
 const monthNames = [
@@ -161,6 +161,26 @@ export default function Feed() {
     );
   }, [assignments, selectedConceptId, selectedDate]);
 
+  const handleMoveUp = async (assignment) => {
+    const idx = dayAssignments.findIndex((a) => a.id === assignment.id);
+    if (idx <= 0) return;
+    const nextList = [...dayAssignments];
+    const temp = nextList[idx - 1];
+    nextList[idx - 1] = nextList[idx];
+    nextList[idx] = temp;
+    await reorderAssignments(nextList);
+  };
+
+  const handleMoveDown = async (assignment) => {
+    const idx = dayAssignments.findIndex((a) => a.id === assignment.id);
+    if (idx < 0 || idx >= dayAssignments.length - 1) return;
+    const nextList = [...dayAssignments];
+    const temp = nextList[idx + 1];
+    nextList[idx + 1] = nextList[idx];
+    nextList[idx] = temp;
+    await reorderAssignments(nextList);
+  };
+
   const calendarCells = useMemo(() => {
     return getCalendarCells(calendarYear, calendarMonth);
   }, [calendarYear, calendarMonth]);
@@ -239,7 +259,7 @@ export default function Feed() {
                   <p className="muted">No assignments scheduled for this day.</p>
                 </div>
               ) : (
-                dayAssignments.map((a) => {
+                dayAssignments.map((a, idx) => {
                   const done = Boolean(completionMap[`${a.id}_${user.uid}`]);
                   const doneCount = users.filter((u) =>
                     completionMap[`${a.id}_${u.id}`]
@@ -252,6 +272,11 @@ export default function Feed() {
                       doneCount={doneCount}
                       totalUsers={users.length || 1}
                       conceptId={selectedConceptId}
+                      isModerator={isModerator}
+                      canMoveUp={idx > 0}
+                      canMoveDown={idx < dayAssignments.length - 1}
+                      onMoveUp={handleMoveUp}
+                      onMoveDown={handleMoveDown}
                     />
                   );
                 })

@@ -61,7 +61,19 @@ export function useAssignments(conceptId = null) {
     }
 
     return onSnapshot(q, (snap) => {
-      setAssignments(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+      const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      docs.sort((a, b) => {
+        if (a.date !== b.date) {
+          return conceptId ? (a.date < b.date ? -1 : 1) : (a.date > b.date ? -1 : 1);
+        }
+        const orderA = typeof a.order === 'number' ? a.order : 0;
+        const orderB = typeof b.order === 'number' ? b.order : 0;
+        if (orderA !== orderB) return orderA - orderB;
+        const timeA = a.createdAt?.seconds || 0;
+        const timeB = b.createdAt?.seconds || 0;
+        return timeA - timeB;
+      });
+      setAssignments(docs);
       setLoading(false);
     });
   }, [conceptId]);
@@ -198,6 +210,23 @@ export async function deleteConcept(conceptId) {
 }
 
 export async function createAssignment(data, conceptId, uid) {
+  let order = 0;
+  try {
+    const snap = await getDocs(
+      query(
+        collection(db, 'assignments'),
+        where('conceptId', '==', conceptId),
+        where('date', '==', data.date)
+      )
+    );
+    if (!snap.empty) {
+      const orders = snap.docs.map((d) => d.data().order ?? 0);
+      order = Math.max(...orders, -1) + 1;
+    }
+  } catch (err) {
+    console.error('Failed to compute order for assignment:', err);
+  }
+
   await addDoc(collection(db, 'assignments'), {
     conceptId,
     title: data.title.trim(),
@@ -207,6 +236,7 @@ export async function createAssignment(data, conceptId, uid) {
     date: data.date,
     linkMode: data.linkMode || 'required',
     noteMode: data.noteMode || 'optional',
+    order,
     createdAt: serverTimestamp(),
     createdBy: uid,
   });
@@ -223,6 +253,16 @@ export async function updateAssignment(assignmentId, data) {
     noteMode: data.noteMode || 'optional',
     updatedAt: serverTimestamp(),
   });
+}
+
+export async function reorderAssignments(orderedAssignments) {
+  if (!db || !orderedAssignments || orderedAssignments.length === 0) return;
+  const batch = writeBatch(db);
+  orderedAssignments.forEach((assignment, index) => {
+    const ref = doc(db, 'assignments', assignment.id);
+    batch.update(ref, { order: index });
+  });
+  await batch.commit();
 }
 
 export async function deleteAssignment(assignmentId) {

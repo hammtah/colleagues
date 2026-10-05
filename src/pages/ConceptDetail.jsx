@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import AssignmentCard from '../components/AssignmentCard';
 import { AssignmentComposer } from '../components/ModeratorForms';
-import { useConcepts, useAssignments, useCompletions, useUsers } from '../hooks';
+import { useConcepts, useAssignments, useCompletions, useUsers, reorderAssignments } from '../hooks';
 
 const getConceptImage = (concept) => {
   if (concept?.imageUrl && concept.imageUrl.trim() !== '') {
@@ -61,6 +61,28 @@ export default function ConceptDetail() {
     }
     return map;
   }, [completions]);
+
+  const handleMoveUp = async (assignment) => {
+    const sameDateAssignments = assignments.filter((a) => a.date === assignment.date);
+    const idx = sameDateAssignments.findIndex((a) => a.id === assignment.id);
+    if (idx <= 0) return;
+    const nextList = [...sameDateAssignments];
+    const temp = nextList[idx - 1];
+    nextList[idx - 1] = nextList[idx];
+    nextList[idx] = temp;
+    await reorderAssignments(nextList);
+  };
+
+  const handleMoveDown = async (assignment) => {
+    const sameDateAssignments = assignments.filter((a) => a.date === assignment.date);
+    const idx = sameDateAssignments.findIndex((a) => a.id === assignment.id);
+    if (idx < 0 || idx >= sameDateAssignments.length - 1) return;
+    const nextList = [...sameDateAssignments];
+    const temp = nextList[idx + 1];
+    nextList[idx + 1] = nextList[idx];
+    nextList[idx] = temp;
+    await reorderAssignments(nextList);
+  };
 
   const conceptStats = useMemo(() => {
     if (!concept || !user) return { completedCount: 0, total: 0, progressPercent: 0, status: 'Not Started' };
@@ -194,6 +216,11 @@ export default function ConceptDetail() {
             {assignments.map((a) => {
               const done = Boolean(completionMap[`${a.id}_${user.uid}`]);
               const doneCount = users.filter((u) => completionMap[`${a.id}_${u.id}`]).length;
+              const sameDateAssignments = assignments.filter((item) => item.date === a.date);
+              const dateIdx = sameDateAssignments.findIndex((item) => item.id === a.id);
+              const canMoveUp = dateIdx > 0;
+              const canMoveDown = dateIdx >= 0 && dateIdx < sameDateAssignments.length - 1;
+
               return (
                 <AssignmentCard
                   key={a.id}
@@ -202,6 +229,11 @@ export default function ConceptDetail() {
                   doneCount={doneCount}
                   totalUsers={users.length || 1}
                   conceptId={conceptId}
+                  isModerator={isModerator}
+                  canMoveUp={canMoveUp}
+                  canMoveDown={canMoveDown}
+                  onMoveUp={handleMoveUp}
+                  onMoveDown={handleMoveDown}
                 />
               );
             })}
