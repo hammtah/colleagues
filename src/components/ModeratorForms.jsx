@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import MarkdownIt from 'markdown-it';
+import 'highlight.js/styles/atom-one-dark.css';
 import { useAuth } from '../AuthContext';
 import {
   createConcept,
@@ -9,6 +11,26 @@ import {
   updateAssignment,
 } from '../hooks';
 import { getLocalDateString } from '../utils/date';
+
+import hljs from 'highlight.js';
+
+const md = new MarkdownIt({
+  html: false,
+  linkify: true,
+  typographer: true,
+  highlight(str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return (
+          '<pre class="hljs-pre"><code class="hljs">' +
+          hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+          '</code></pre>'
+        );
+      } catch (_) { /* ignore */ }
+    }
+    return '<pre class="hljs-pre"><code class="hljs">' + md.utils.escapeHtml(str) + '</code></pre>';
+  },
+});
 
 const emptyConceptForm = () => ({
   title: '',
@@ -275,6 +297,7 @@ export function AssignmentComposer({ conceptId, defaultDate, editingAssignment, 
     title: '',
     link: '',
     note: '',
+    markdownContent: '',
     date: defaultDate || getLocalDateString(),
     linkMode: 'required',
     noteMode: 'optional',
@@ -282,6 +305,7 @@ export function AssignmentComposer({ conceptId, defaultDate, editingAssignment, 
   const [open, setOpen] = useState(Boolean(editingAssignment));
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const [mdTab, setMdTab] = useState('write');
 
   useEffect(() => {
     if (editingAssignment) {
@@ -289,6 +313,7 @@ export function AssignmentComposer({ conceptId, defaultDate, editingAssignment, 
         title: editingAssignment.title || '',
         link: editingAssignment.link || '',
         note: editingAssignment.note || '',
+        markdownContent: editingAssignment.markdownContent || '',
         date: editingAssignment.date || defaultDate || getLocalDateString(),
         linkMode: editingAssignment.linkMode || 'required',
         noteMode: editingAssignment.noteMode || 'optional',
@@ -322,6 +347,7 @@ export function AssignmentComposer({ conceptId, defaultDate, editingAssignment, 
           title: '',
           link: '',
           note: '',
+          markdownContent: '',
           date: defaultDate || getLocalDateString(),
           linkMode: 'required',
           noteMode: 'optional',
@@ -346,6 +372,7 @@ export function AssignmentComposer({ conceptId, defaultDate, editingAssignment, 
   }
 
   const isNoFields = form.linkMode === 'none' && form.noteMode === 'none';
+  const mdPreviewHtml = useMemo(() => md.render(form.markdownContent || ''), [form.markdownContent]);
 
   return (
     <section className={editingAssignment ? '' : 'mod-panel'}>
@@ -373,8 +400,54 @@ export function AssignmentComposer({ conceptId, defaultDate, editingAssignment, 
           </label>
           <label>
             Instructions / Note <span className="field-optional">(optional)</span>
-            <textarea name="note" value={form.note} onChange={onChange} rows={2} placeholder="Optional instructions or notes for members..." />
+            <textarea name="note" value={form.note} onChange={onChange} rows={2} placeholder="Optional short instructions or notes for members..." />
           </label>
+
+          {/* Markdown Content Field */}
+          <div className="md-editor-field">
+            <div className="md-editor-label">
+              <span>Assignment Description</span>
+              <span className="field-optional">(optional — supports Markdown)</span>
+            </div>
+            <div className="md-editor-tabs">
+              <button
+                type="button"
+                className={`md-tab-btn${mdTab === 'write' ? ' active' : ''}`}
+                onClick={() => setMdTab('write')}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>edit</span>
+                Write
+              </button>
+              <button
+                type="button"
+                className={`md-tab-btn${mdTab === 'preview' ? ' active' : ''}`}
+                onClick={() => setMdTab('preview')}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>preview</span>
+                Preview
+              </button>
+            </div>
+            {mdTab === 'write' ? (
+              <textarea
+                name="markdownContent"
+                value={form.markdownContent}
+                onChange={onChange}
+                rows={8}
+                placeholder={'Write markdown here...\n\n# Heading\n**bold**, _italic_, `code`\n\n```js\nconsole.log(\'hello\')\n```'}
+                className="md-editor-textarea"
+              />
+            ) : (
+              <div
+                className="md-preview-pane assignment-md-body"
+                dangerouslySetInnerHTML={{ __html: mdPreviewHtml || '<p class="md-preview-empty">Nothing to preview yet.</p>' }}
+              />
+            )}
+            <p className="md-editor-hint">
+              <span className="material-symbols-outlined" style={{ fontSize: '13px', verticalAlign: 'middle' }}>info</span>
+              {' '}This content will be rendered as formatted text when members open the assignment.
+            </p>
+          </div>
+
           <label>
             Date <span className="field-required">*</span>
             <input type="date" name="date" value={form.date} onChange={onChange} required />

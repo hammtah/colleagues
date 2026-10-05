@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import MarkdownIt from 'markdown-it';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/atom-one-dark.css';
 import { useAuth } from '../AuthContext';
 import CommentThread from '../components/CommentThread';
 import { AssignmentComposer } from '../components/ModeratorForms';
@@ -14,6 +17,24 @@ import {
   deleteAssignment,
 } from '../hooks';
 import { getLocalDateString, isFutureDateString } from '../utils/date';
+
+const md = new MarkdownIt({
+  html: false,
+  linkify: true,
+  typographer: true,
+  highlight(str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return (
+          '<pre class="hljs-pre"><code class="hljs">' +
+          hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+          '</code></pre>'
+        );
+      } catch (_) { /* ignore */ }
+    }
+    return '<pre class="hljs-pre"><code class="hljs">' + md.utils.escapeHtml(str) + '</code></pre>';
+  },
+});
 
 function ColleagueCard({ item, currentUserId, usersById, forceExpanded }) {
   const [expanded, setExpanded] = useState(false);
@@ -92,7 +113,7 @@ function ColleagueCard({ item, currentUserId, usersById, forceExpanded }) {
             <div className="colleague-detail-box insight">
               <div className="box-header">
                 <span className="material-symbols-outlined">notes</span>
-                <span>Pattern, Key Insight & Blockers</span>
+                <span>Notes</span>
               </div>
               <p style={{ whiteSpace: 'pre-wrap' }}>{groupedNotes}</p>
             </div>
@@ -148,6 +169,11 @@ export default function AssignmentDetail() {
   const linkMode = assignment ? (assignment.linkMode || 'required') : 'required';
   const noteMode = assignment ? (assignment.noteMode || 'optional') : 'optional';
   const isNoFieldsSubmission = linkMode === 'none' && noteMode === 'none';
+
+  const assignmentMarkdownHtml = useMemo(
+    () => (assignment?.markdownContent ? md.render(assignment.markdownContent) : ''),
+    [assignment]
+  );
 
   const usersById = useMemo(
     () => Object.fromEntries(users.map((u) => [u.id, u])),
@@ -480,6 +506,16 @@ export default function AssignmentDetail() {
               )}
             </div>
 
+            {/* Rendered Markdown Content */}
+            {assignmentMarkdownHtml && (
+              <div className="assignment-md-section">
+                <div
+                  className="assignment-md-body"
+                  dangerouslySetInnerHTML={{ __html: assignmentMarkdownHtml }}
+                />
+              </div>
+            )}
+
             {/* My Submission / Solution Section */}
             <div className="detail-submission-section">
               <div className="submission-section-header">
@@ -561,7 +597,7 @@ export default function AssignmentDetail() {
                   {noteMode !== 'none' && (
                     <div className="submission-field">
                       <label htmlFor="notes">
-                        Pattern, Key Insight & Blockers {noteMode === 'required' ? <span className="field-required">*</span> : <span className="field-optional">(optional)</span>}
+                        Notes {noteMode === 'required' ? <span className="field-required">*</span> : <span className="field-optional">(optional)</span>}
                       </label>
                       <textarea
                         id="notes"
@@ -611,7 +647,7 @@ export default function AssignmentDetail() {
 
                   {noteMode !== 'none' && (myCompletion.notes || myCompletion.keyInsight) ? (
                     <div className="submission-view-item">
-                      <span className="submission-view-label">Pattern, Key Insight & Blockers</span>
+                      <span className="submission-view-label">Notes</span>
                       <div className="submission-box insight-box">
                         <span className="material-symbols-outlined box-icon">notes</span>
                         <p style={{ whiteSpace: 'pre-wrap' }}>{myCompletion.notes || myCompletion.keyInsight}</p>

@@ -1551,6 +1551,212 @@ select {
   margin: 0;
 }
 
+/* ───────────────────────────────────────────
+   Assignment Markdown Content Block (User View)
+─────────────────────────────────────────── */
+.assignment-md-section {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.assignment-md-body {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--ink);
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.assignment-md-body h1,
+.assignment-md-body h2,
+.assignment-md-body h3,
+.assignment-md-body h4,
+.assignment-md-body h5,
+.assignment-md-body h6 {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 700;
+  margin: 1.25em 0 0.5em;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+.assignment-md-body h1 { font-size: 1.55rem; }
+.assignment-md-body h2 { font-size: 1.25rem; }
+.assignment-md-body h3 { font-size: 1.1rem; }
+
+.assignment-md-body p {
+  margin: 0 0 0.9em;
+}
+
+.assignment-md-body ul,
+.assignment-md-body ol {
+  margin: 0.5em 0 0.9em 1.5em;
+  padding: 0;
+}
+
+.assignment-md-body li + li {
+  margin-top: 0.25em;
+}
+
+.assignment-md-body a {
+  color: var(--brand);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.assignment-md-body a:hover {
+  opacity: 0.8;
+}
+
+.assignment-md-body blockquote {
+  margin: 0.75em 0;
+  padding: 0.6em 1em;
+  border-left: 3px solid var(--brand);
+  background: var(--brand-soft);
+  border-radius: 0 8px 8px 0;
+  color: var(--ink);
+}
+
+.assignment-md-body hr {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 1.25em 0;
+}
+
+.assignment-md-body strong { font-weight: 700; }
+.assignment-md-body em { font-style: italic; }
+
+/* Inline code */
+.assignment-md-body code {
+  background: var(--surface-hover);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.15em 0.4em;
+  font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  font-size: 0.87em;
+  color: var(--brand);
+}
+
+/* Code blocks via highlight.js */
+.assignment-md-body .hljs-pre {
+  margin: 0.75em 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.assignment-md-body .hljs-pre code.hljs {
+  display: block;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  border-radius: 0;
+}
+
+/* ───────────────────────────────────────────
+   Markdown Editor (Moderator Form)
+─────────────────────────────────────────── */
+.md-editor-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.md-editor-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+  padding: 0.65rem 0.85rem 0;
+}
+
+.md-editor-tabs {
+  display: flex;
+  gap: 0;
+  padding: 0.5rem 0.85rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.md-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.75rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+  margin-bottom: -1px;
+}
+
+.md-tab-btn:hover {
+  color: var(--brand);
+  background: var(--brand-soft);
+}
+
+.md-tab-btn.active {
+  color: var(--brand);
+  background: var(--surface);
+  border-color: var(--line);
+  border-bottom-color: var(--surface);
+}
+
+.md-editor-textarea {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 0.85rem;
+  border: none;
+  outline: none;
+  background: var(--surface);
+  font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  font-size: 0.87rem;
+  line-height: 1.6;
+  color: var(--ink);
+  resize: vertical;
+  min-height: 180px;
+  box-sizing: border-box;
+}
+
+.md-preview-pane {
+  padding: 0.85rem;
+  min-height: 180px;
+  background: var(--bg-accent);
+}
+
+.md-preview-empty {
+  color: var(--muted);
+  font-style: italic;
+  margin: 0;
+}
+
+.md-editor-hint {
+  margin: 0;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+  background: var(--surface-hover);
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+
+
 /* Stats Row */
 .detail-stats-row {
   display: grid;
