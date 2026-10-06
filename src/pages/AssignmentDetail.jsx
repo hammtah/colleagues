@@ -158,6 +158,14 @@ export default function AssignmentDetail() {
   const [forceExpandedAll, setForceExpandedAll] = useState(null);
   const [showGameModal, setShowGameModal] = useState(false);
   const [gamifiedPrevPoints, setGamifiedPrevPoints] = useState(0);
+  const [copiedMd, setCopiedMd] = useState(false);
+
+  const handleCopyMarkdown = () => {
+    if (!assignment?.markdownContent) return;
+    navigator.clipboard.writeText(assignment.markdownContent);
+    setCopiedMd(true);
+    setTimeout(() => setCopiedMd(false), 2000);
+  };
 
   const loading = assignmentsLoading || completionsLoading || usersLoading || eventsLoading;
 
@@ -509,6 +517,25 @@ export default function AssignmentDetail() {
             {/* Rendered Markdown Content */}
             {assignmentMarkdownHtml && (
               <div className="assignment-md-section">
+                <div className="assignment-md-header">
+                  <span className="assignment-md-tag">
+                    <span className="material-symbols-outlined" style={{ fontSize: '18px', color: 'var(--brand)' }}>
+                      description
+                    </span>
+                    Assignment Content
+                  </span>
+                  <button
+                    type="button"
+                    className={`copy-md-btn ${copiedMd ? 'copied' : ''}`}
+                    onClick={handleCopyMarkdown}
+                    title={copiedMd ? "Copied to clipboard!" : "Copy content"}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>
+                      {copiedMd ? 'check' : 'content_copy'}
+                    </span>
+                    <span>{copiedMd ? 'Copied!' : 'Copy'}</span>
+                  </button>
+                </div>
                 <div
                   className="assignment-md-body"
                   dangerouslySetInnerHTML={{ __html: assignmentMarkdownHtml }}
