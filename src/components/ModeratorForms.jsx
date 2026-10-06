@@ -301,6 +301,7 @@ export function AssignmentComposer({ conceptId, defaultDate, editingAssignment, 
     date: defaultDate || getLocalDateString(),
     linkMode: 'required',
     noteMode: 'optional',
+    isOptional: false,
   });
   const [open, setOpen] = useState(Boolean(editingAssignment));
   const [saving, setSaving] = useState(false);
@@ -317,6 +318,7 @@ export function AssignmentComposer({ conceptId, defaultDate, editingAssignment, 
         date: editingAssignment.date || defaultDate || getLocalDateString(),
         linkMode: editingAssignment.linkMode || 'required',
         noteMode: editingAssignment.noteMode || 'optional',
+        isOptional: Boolean(editingAssignment.isOptional),
       });
       setOpen(true);
     } else if (defaultDate) {
@@ -351,6 +353,7 @@ export function AssignmentComposer({ conceptId, defaultDate, editingAssignment, 
           date: defaultDate || getLocalDateString(),
           linkMode: 'required',
           noteMode: 'optional',
+          isOptional: false,
         });
         setMessage('Assignment posted.');
         setOpen(false);
@@ -451,6 +454,19 @@ export function AssignmentComposer({ conceptId, defaultDate, editingAssignment, 
           <label>
             Date <span className="field-required">*</span>
             <input type="date" name="date" value={form.date} onChange={onChange} required />
+          </label>
+
+          <label className="checkbox-label" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', margin: '0.5rem 0', userSelect: 'none' }}>
+            <input
+              type="checkbox"
+              name="isOptional"
+              checked={Boolean(form.isOptional)}
+              onChange={(e) => setForm((prev) => ({ ...prev, isOptional: e.target.checked }))}
+              style={{ width: '18px', height: '18px', accentColor: 'var(--brand)', cursor: 'pointer' }}
+            />
+            <span style={{ fontSize: '0.95rem', fontWeight: '500' }}>
+              Mark as <strong>Optional Assignment</strong>
+            </span>
           </label>
 
           {/* Member Submission Settings */}

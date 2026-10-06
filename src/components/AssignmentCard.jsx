@@ -48,7 +48,12 @@ export default function AssignmentCard({
         </div>
 
         <div className="assignment-row-info">
-          <h3 className="assignment-row-title" title={assignment.title}>{assignment.title}</h3>
+          <div className="assignment-row-title-wrap">
+            <h3 className="assignment-row-title" title={assignment.title}>{assignment.title}</h3>
+            {assignment.isOptional && (
+              <span className="assignment-optional-chip">Optional</span>
+            )}
+          </div>
           <span className="assignment-row-date muted">{assignment.date}</span>
         </div>
       </div>

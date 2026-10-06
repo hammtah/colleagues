@@ -236,6 +236,7 @@ export async function createAssignment(data, conceptId, uid) {
     date: data.date,
     linkMode: data.linkMode || 'required',
     noteMode: data.noteMode || 'optional',
+    isOptional: Boolean(data.isOptional),
     order,
     createdAt: serverTimestamp(),
     createdBy: uid,
@@ -251,6 +252,7 @@ export async function updateAssignment(assignmentId, data) {
     date: data.date,
     linkMode: data.linkMode || 'required',
     noteMode: data.noteMode || 'optional',
+    isOptional: Boolean(data.isOptional),
     updatedAt: serverTimestamp(),
   });
 }

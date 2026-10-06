@@ -506,6 +506,11 @@ export default function AssignmentDetail() {
                     ) : (
                       assignment.title
                     )}
+                    {assignment.isOptional && (
+                      <span className="assignment-optional-chip" style={{ marginLeft: '0.75rem', verticalAlign: 'middle', display: 'inline-flex' }}>
+                        Optional
+                      </span>
+                    )}
                   </h1>
                   {assignment.note && (
                     <p className="detail-note">{assignment.note}</p>
