@@ -15,6 +15,7 @@ import {
   useEvents,
   setCompletion,
   deleteAssignment,
+  toggleAssignmentHidden,
 } from '../hooks';
 import { getLocalDateString, isFutureDateString } from '../utils/date';
 
@@ -144,7 +145,7 @@ export default function AssignmentDetail() {
 
   const conceptId = searchParams.get('concept') || '';
 
-  const { assignments, loading: assignmentsLoading } = useAssignments(conceptId || null);
+  const { assignments, loading: assignmentsLoading } = useAssignments(conceptId || null, { isModerator });
   const { completions, loading: completionsLoading } = useCompletions();
   const { users, loading: usersLoading } = useUsers();
   const { events, loading: eventsLoading } = useEvents();
@@ -363,6 +364,15 @@ export default function AssignmentDetail() {
     }
   };
 
+  const handleToggleHidden = async () => {
+    if (!assignment || !isModerator) return;
+    try {
+      await toggleAssignmentHidden(assignment.id, assignment.hidden);
+    } catch (err) {
+      console.error('Failed to toggle hidden assignment', err);
+    }
+  };
+
   const handleBack = () => {
     const params = conceptId ? `?concept=${conceptId}` : '';
     navigate(`/feed${params}`);
@@ -465,6 +475,17 @@ export default function AssignmentDetail() {
                     <button
                       type="button"
                       className="btn ghost icon-btn"
+                      onClick={handleToggleHidden}
+                      title={assignment.hidden ? 'Unhide Assignment' : 'Hide Assignment from Members'}
+                      style={{ padding: '0.2rem 0.4rem', color: assignment.hidden ? '#ef4444' : undefined }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
+                        {assignment.hidden ? 'visibility_off' : 'visibility'}
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      className="btn ghost icon-btn"
                       onClick={() => setIsModEditing((v) => !v)}
                       title="Edit Assignment"
                       style={{ padding: '0.2rem 0.4rem' }}
@@ -509,6 +530,28 @@ export default function AssignmentDetail() {
                     {assignment.isOptional && (
                       <span className="assignment-optional-chip" style={{ marginLeft: '0.75rem', verticalAlign: 'middle', display: 'inline-flex' }}>
                         Optional
+                      </span>
+                    )}
+                    {assignment.hidden && (
+                      <span
+                        className="assignment-hidden-chip"
+                        style={{
+                          marginLeft: '0.75rem',
+                          verticalAlign: 'middle',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          padding: '3px 8px',
+                          borderRadius: '4px',
+                          backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                          color: '#ef4444',
+                          fontWeight: '600',
+                          fontSize: '0.75rem',
+                          border: '1px solid rgba(239, 68, 68, 0.3)',
+                        }}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>visibility_off</span>
+                        Hidden from Members
                       </span>
                     )}
                   </h1>

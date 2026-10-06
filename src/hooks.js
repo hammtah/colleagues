@@ -39,7 +39,7 @@ export function useConcepts({ isModerator = false } = {}) {
   return { concepts, loading };
 }
 
-export function useAssignments(conceptId = null) {
+export function useAssignments(conceptId = null, { isModerator = false } = {}) {
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -61,7 +61,10 @@ export function useAssignments(conceptId = null) {
     }
 
     return onSnapshot(q, (snap) => {
-      const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      let docs = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      if (!isModerator) {
+        docs = docs.filter((a) => !a.hidden);
+      }
       docs.sort((a, b) => {
         if (a.date !== b.date) {
           return conceptId ? (a.date < b.date ? -1 : 1) : (a.date > b.date ? -1 : 1);
@@ -76,7 +79,7 @@ export function useAssignments(conceptId = null) {
       setAssignments(docs);
       setLoading(false);
     });
-  }, [conceptId]);
+  }, [conceptId, isModerator]);
 
   return { assignments, loading };
 }
@@ -237,6 +240,7 @@ export async function createAssignment(data, conceptId, uid) {
     linkMode: data.linkMode || 'required',
     noteMode: data.noteMode || 'optional',
     isOptional: Boolean(data.isOptional),
+    hidden: Boolean(data.hidden),
     order,
     createdAt: serverTimestamp(),
     createdBy: uid,
@@ -253,6 +257,14 @@ export async function updateAssignment(assignmentId, data) {
     linkMode: data.linkMode || 'required',
     noteMode: data.noteMode || 'optional',
     isOptional: Boolean(data.isOptional),
+    hidden: Boolean(data.hidden),
+    updatedAt: serverTimestamp(),
+  });
+}
+
+export async function toggleAssignmentHidden(assignmentId, currentlyHidden) {
+  await updateDoc(doc(db, 'assignments', assignmentId), {
+    hidden: !currentlyHidden,
     updatedAt: serverTimestamp(),
   });
 }

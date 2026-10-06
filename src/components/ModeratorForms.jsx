@@ -302,6 +302,7 @@ export function AssignmentComposer({ conceptId, defaultDate, editingAssignment, 
     linkMode: 'required',
     noteMode: 'optional',
     isOptional: false,
+    hidden: false,
   });
   const [open, setOpen] = useState(Boolean(editingAssignment));
   const [saving, setSaving] = useState(false);
@@ -319,6 +320,7 @@ export function AssignmentComposer({ conceptId, defaultDate, editingAssignment, 
         linkMode: editingAssignment.linkMode || 'required',
         noteMode: editingAssignment.noteMode || 'optional',
         isOptional: Boolean(editingAssignment.isOptional),
+        hidden: Boolean(editingAssignment.hidden),
       });
       setOpen(true);
     } else if (defaultDate) {
@@ -354,6 +356,7 @@ export function AssignmentComposer({ conceptId, defaultDate, editingAssignment, 
           linkMode: 'required',
           noteMode: 'optional',
           isOptional: false,
+          hidden: false,
         });
         setMessage('Assignment posted.');
         setOpen(false);
@@ -456,18 +459,33 @@ export function AssignmentComposer({ conceptId, defaultDate, editingAssignment, 
             <input type="date" name="date" value={form.date} onChange={onChange} required />
           </label>
 
-          <label className="checkbox-label" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', margin: '0.5rem 0', userSelect: 'none' }}>
-            <input
-              type="checkbox"
-              name="isOptional"
-              checked={Boolean(form.isOptional)}
-              onChange={(e) => setForm((prev) => ({ ...prev, isOptional: e.target.checked }))}
-              style={{ width: '18px', height: '18px', accentColor: 'var(--brand)', cursor: 'pointer' }}
-            />
-            <span style={{ fontSize: '0.95rem', fontWeight: '500' }}>
-              Mark as <strong>Optional Assignment</strong>
-            </span>
-          </label>
+          <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', margin: '0.5rem 0' }}>
+            <label className="checkbox-label" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', userSelect: 'none' }}>
+              <input
+                type="checkbox"
+                name="isOptional"
+                checked={Boolean(form.isOptional)}
+                onChange={(e) => setForm((prev) => ({ ...prev, isOptional: e.target.checked }))}
+                style={{ width: '18px', height: '18px', accentColor: 'var(--brand)', cursor: 'pointer' }}
+              />
+              <span style={{ fontSize: '0.95rem', fontWeight: '500' }}>
+                Mark as <strong>Optional Assignment</strong>
+              </span>
+            </label>
+
+            <label className="checkbox-label" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', userSelect: 'none' }}>
+              <input
+                type="checkbox"
+                name="hidden"
+                checked={Boolean(form.hidden)}
+                onChange={(e) => setForm((prev) => ({ ...prev, hidden: e.target.checked }))}
+                style={{ width: '18px', height: '18px', accentColor: '#ef4444', cursor: 'pointer' }}
+              />
+              <span style={{ fontSize: '0.95rem', fontWeight: '500', color: form.hidden ? '#ef4444' : undefined }}>
+                Hide assignment from members
+              </span>
+            </label>
+          </div>
 
           {/* Member Submission Settings */}
           <div className="submission-config-box">

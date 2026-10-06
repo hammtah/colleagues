@@ -53,6 +53,12 @@ export default function AssignmentCard({
             {assignment.isOptional && (
               <span className="assignment-optional-chip">Optional</span>
             )}
+            {assignment.hidden && (
+              <span className="assignment-hidden-chip" title="Hidden from regular members">
+                <span className="material-symbols-outlined" style={{ fontSize: '13px' }}>visibility_off</span>
+                Hidden
+              </span>
+            )}
           </div>
           <span className="assignment-row-date muted">{assignment.date}</span>
         </div>
