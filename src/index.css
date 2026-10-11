@@ -533,6 +533,33 @@ select {
   color: var(--danger);
 }
 
+.success {
+  color: var(--brand);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.auth-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.auth-footer .linkish {
+  padding: 0.35rem 0;
+}
+
+.auth-divider {
+  width: 100%;
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 0.4rem 0;
+}
+
 .concept-switcher,
 .progress-switcher {
   display: flex;

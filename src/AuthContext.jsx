@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
@@ -77,6 +78,8 @@ export function AuthProvider({ children }) {
 
   const logout = () => signOut(auth);
 
+  const resetPassword = (email) => sendPasswordResetEmail(auth, email);
+
   const isModerator =
     Boolean(user && isModeratorUid(user.uid)) || profile?.role === 'moderator';
 
@@ -91,6 +94,7 @@ export function AuthProvider({ children }) {
         register,
         login,
         logout,
+        resetPassword,
       }}
     >
       {children}
