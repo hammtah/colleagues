@@ -1,97 +1,55 @@
-# Colleagues — Concept of the Month
+# 🤝 Colleagues
 
-Small React + Firebase app for a group (&lt;10) studying a shared concept together. One moderator posts assignments and events; everyone tracks their own completion publicly.
+> **A collaborative learning platform for teams who study together.**
 
-Spark (free) plan only: client-side logic, Firestore security rules, Firebase Hosting. No Cloud Functions.
+---
+
+## What is Colleagues?
+
+Colleagues is a shared workspace for groups of people working through the same learning material together. Whether you're grinding through coding interview prep, exploring a new tech topic, or running a team book club — Colleagues gives everyone a common place to stay in sync, track progress, and keep the conversation going.
+
+The moderator sets the direction. Everyone else follows along, checks off their work, and builds on each other's thinking. It's learning that feels like a team effort.
+
+---
 
 ## Features
 
-- Email/password auth
-- Multiple concepts (create, edit, delete) — each with its own assignments
-- Assignment feed scoped to the selected concept
-- Public group progress: per-concept and overall (all concepts combined)
-- Events with RSVP (coding challenge / mock interview / other)
+### 📚 Concept of the Month
+The whole group focuses on the same topic at the same time — a challenge series, a subject area, a curriculum. The moderator sets the current concept with a title, description, and timeframe, so everyone is always aligned on what matters this month.
 
-## Setup
+### 📋 Assignment Feed
+A clean feed of problems and tasks posted by the moderator, each with a title, link, and optional notes. Work through them at your own pace and check off what you've done.
 
-### 1. Create a Firebase project
+### 👥 Group Progress Overview
+See where everyone stands across all assignments. A clear grid of members and tasks gives the group a shared picture of how things are going — and a natural nudge to keep moving.
 
-1. Go to [Firebase Console](https://console.firebase.google.com/) and create a project.
-2. Enable **Authentication → Sign-in method → Email/Password**.
-3. Create a **Firestore** database (start in production mode; we deploy rules next).
-4. Register a **Web app** and copy the config object.
-5. (Optional but recommended) In Authentication, create the moderator account first so you can copy their UID.
+### 🏆 Leaderboard
+A full ranked standings board that scores everyone based on assignments completed and events attended. Filtered by monthly or all-time, and by concept track. The top three get a podium. Everyone sees where they rank.
 
-### 2. Configure the app
+### 📈 Progress & Activity
+A personal analytics dashboard showing your completion pace over daily and weekly views, your curriculum completion rate, and your total score. The whole thing is locked behind a points threshold — you earn access by actually doing the work.
 
-```bash
-cp .env.example .env.local
-```
+### 💬 Discussion Threads
+Every assignment has a comment thread where members can share solutions, ask questions, or drop hints. The best learning happens in the conversation after the problem.
 
-Fill in:
+### 🗓️ Events
+Moderators can schedule group events — coding challenges, mock interviews, open study sessions. Members RSVP, and everyone can see who's joining.
 
-| Variable | Source |
-| --- | --- |
-| `VITE_FIREBASE_*` | Project settings → Your apps → Firebase SDK snippet |
-| `VITE_MODERATOR_UID` | Authentication → Users → UID of the moderator |
+### 👤 Profiles
+Each member has a profile with their name and activity. A simple presence for a focused community.
 
-Also set the same UID in `firestore.rules` inside `moderatorUid()` (replace `REPLACE_WITH_MODERATOR_UID`).
+### 🌙 Dark Mode
+Because obviously.
 
-Update `.firebaserc` with your project id:
+---
 
-```json
-{
-  "projects": {
-    "default": "your-project-id"
-  }
-}
-```
+## Built With
 
-### 3. Install and run locally
+| | |
+|---|---|
+| Frontend | React |
+| Auth & Database | Firebase |
 
-```bash
-npm install
-npm run dev
-```
+---
 
-Open the printed local URL, register accounts for the group. The account whose UID matches `VITE_MODERATOR_UID` gets moderator controls.
-
-### 4. Deploy security rules and hosting
-
-```bash
-npx firebase login
-npm run deploy:rules
-npm run deploy:hosting
-```
-
-Or everything at once:
-
-```bash
-npm run deploy
-```
-
-Hosting serves the Vite `dist/` build with SPA rewrites to `index.html`.
-
-## Data model
-
-| Collection / doc | Purpose |
-| --- | --- |
-| `users/{uid}` | `displayName`, `email`, `role`, `createdAt` |
-| `concepts/{id}` | Title, description, date range |
-| `assignments/{id}` | `conceptId`, title, link, note, date |
-| `assignments/{id}/comments/{id}` | Comment text + author |
-| `completions/{assignmentId}_{userId}` | `done` boolean |
-| `events/{id}` | Title, type, date, description, `rsvps[]` |
-
-## Roles
-
-- **Moderator** — UID from `VITE_MODERATOR_UID` / rules. Can manage concepts, assignments, events.
-- **Member** — everyone authenticated. Can toggle own completion, comment, RSVP.
-
-## Scripts
-
-- `npm run dev` — local Vite server
-- `npm run build` — production build
-- `npm run deploy:rules` — Firestore rules only
-- `npm run deploy:hosting` — build + hosting
-- `npm run deploy` — build + full Firebase deploy
+*Built for people who learn better together.*
